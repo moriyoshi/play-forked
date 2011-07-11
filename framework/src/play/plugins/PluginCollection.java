@@ -8,6 +8,7 @@ import play.classloading.ApplicationClassloader;
 import play.db.Model;
 import play.exceptions.UnexpectedException;
 import play.mvc.Http;
+import play.mvc.Route;
 import play.mvc.Router;
 import play.mvc.results.Result;
 import play.templates.BaseTemplate;
@@ -615,15 +616,15 @@ public class PluginCollection {
         }
     }
 
-    public void onRequestRouting(Router.Route route){
+    public void onRequestRouting(Route route) {
         for (PlayPlugin plugin : getEnabledPlugins()) {
             plugin.onRequestRouting(route);
         }
     }
 
-    public void onRoutesLoaded(){
+    public void onRoutesLoaded(Router router) {
         for (PlayPlugin plugin : getEnabledPlugins()) {
-            plugin.onRoutesLoaded();
+            plugin.onRoutesLoaded(router);
         }
     }
 

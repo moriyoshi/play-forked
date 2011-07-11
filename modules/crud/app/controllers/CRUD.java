@@ -248,11 +248,11 @@ public abstract class CRUD extends Controller {
         }
 
         public Object getListAction() {
-            return Router.reverse(controllerClass.getName().replace("$", "") + ".list");
+            return Router.current.get().reverse(controllerClass.getName().replace("$", "") + ".list");
         }
 
         public Object getBlankAction() {
-            return Router.reverse(controllerClass.getName().replace("$", "") + ".blank");
+            return Router.current.get().reverse(controllerClass.getName().replace("$", "") + ".blank");
         }
 
         public Long count(String search, String searchFields, String where) {

@@ -23,7 +23,7 @@ import play.exceptions.TemplateExecutionException;
 import play.exceptions.TemplateNotFoundException;
 import play.libs.Codec;
 import play.mvc.Http;
-import play.mvc.Router.ActionDefinition;
+import play.mvc.AbstractActionDefinition;
 import play.mvc.Scope.Flash;
 import play.mvc.Scope.Session;
 import play.templates.BaseTemplate.RawData;
@@ -81,28 +81,31 @@ public class FastTags {
      * @param fromLine template line number where the tag is defined
      */
     public static void _form(Map<?, ?> args, Closure body, PrintWriter out, ExecutableTemplate template, int fromLine) {
-        ActionDefinition actionDef = (ActionDefinition) args.get("arg");
+        final String encoding = Http.Response.current().encoding;
+        AbstractActionDefinition actionDef = (AbstractActionDefinition)args.get("arg");
         if (actionDef == null) {
-            actionDef = (ActionDefinition) args.get("action");
+            actionDef = (AbstractActionDefinition) args.get("action");
         }
         String enctype = (String) args.get("enctype");
         if (enctype == null) {
             enctype = "application/x-www-form-urlencoded";
         }
-        if (actionDef.star) {
-            actionDef.method = "POST"; // prefer POST for form ....
+        String realMethod = actionDef.getMethod();
+        if (realMethod == null && actionDef.isContainingStar()) {
+            realMethod = "POST"; // prefer POST for form ....
         }
+        String method = realMethod;
         if (args.containsKey("method")) {
-            actionDef.method = args.get("method").toString();
+            method = args.get("method").toString();
         }
-        if (!("GET".equals(actionDef.method) || "POST".equals(actionDef.method))) {
-            String separator = actionDef.url.indexOf('?') != -1 ? "&" : "?";
-            actionDef.url += separator + "x-http-method-override=" + actionDef.method.toUpperCase();
-            actionDef.method = "POST";
+        String url = actionDef.getUri(encoding).toString();
+        if (!("GET".equals(realMethod) || "POST".equals(realMethod))) {
+            String separator = url.indexOf('?') != -1 ? "&" : "?";
+            url += separator + "x-http-method-override=" + actionDef.getMethod().toUpperCase();
+            method = "POST";
         }
-        String encoding = Http.Response.current().encoding;
-        out.print("<form action=\"" + actionDef.url + "\" method=\"" + actionDef.method.toLowerCase() + "\" accept-charset=\""+encoding+"\" enctype=\"" + enctype + "\" " + serialize(args, "action", "method", "accept-charset", "enctype") + ">");
-        if (!("GET".equals(actionDef.method))) {
+        out.print("<form action=\"" + url + "\" method=\"" + method.toLowerCase() + "\" accept-charset=\""+encoding+"\" enctype=\"" + enctype + "\" " + serialize(args, "action", "method", "accept-charset", "enctype") + ">");
+        if (!("GET".equals(method))) {
             _authenticityToken(args, body, out, template, fromLine);
         }
         out.println(JavaExtensions.toString(body));
@@ -164,25 +167,28 @@ public class FastTags {
      * @param fromLine template line number where the tag is defined
      */
     public static void _a(Map<?, ?> args, Closure body, PrintWriter out, ExecutableTemplate template, int fromLine) {
-        ActionDefinition actionDef = (ActionDefinition) args.get("arg");
+        AbstractActionDefinition actionDef = (AbstractActionDefinition) args.get("arg");
         if (actionDef == null) {
-            actionDef = (ActionDefinition) args.get("action");
+            actionDef = (AbstractActionDefinition) args.get("action");
         }
-        if (!("GET".equals(actionDef.method))) {
-            if (!("POST".equals(actionDef.method))) {
-                String separator = actionDef.url.indexOf('?') != -1 ? "&" : "?";
-                actionDef.url += separator + "x-http-method-override=" + actionDef.method;
-                actionDef.method = "POST";
+        String realMethod = actionDef.getMethod();
+        String method = realMethod;
+        String url = actionDef.getUri().toString();
+        if (!("GET".equals(realMethod))) {
+            if (!("POST".equals(realMethod))) {
+                String separator = url.indexOf('?') != -1 ? "&" : "?";
+                url += separator + "x-http-method-override=" + realMethod;
+                method = "POST";
             }
             String id = Codec.UUID();
-            out.print("<form method=\"POST\" id=\"" + id + "\" " +(args.containsKey("target") ? "target=\"" + args.get("target") + "\"" : "")+ " style=\"display:none\" action=\"" + actionDef.url + "\">");
+            out.print("<form method=\"POST\" id=\"" + id + "\" " +(args.containsKey("target") ? "target=\"" + args.get("target") + "\"" : "")+ " style=\"display:none\" action=\"" + url + "\">");
             _authenticityToken(args, body, out, template, fromLine);
             out.print("</form>");
             out.print("<a href=\"javascript:document.getElementById('" + id + "').submit();\" " + serialize(args, "href") + ">");
             out.print(JavaExtensions.toString(body));
             out.print("</a>");
         } else {
-            out.print("<a href=\"" + actionDef.url + "\" " + serialize(args, "href") + ">");
+            out.print("<a href=\"" + url + "\" " + serialize(args, "href") + ">");
             out.print(JavaExtensions.toString(body));
             out.print("</a>");
         }

@@ -13,8 +13,8 @@ import java.net.InetSocketAddress;
 
 import static org.jboss.netty.handler.codec.http.HttpHeaders.Names.*;
 
-public class SslPlayHandler extends PlayHandler {
 
+public class SslPlayHandler extends PlayHandler {
     @Override
     public Request parseRequest(ChannelHandlerContext ctx, HttpRequest nettyRequest) throws Exception {
         Request request = super.parseRequest(ctx, nettyRequest);

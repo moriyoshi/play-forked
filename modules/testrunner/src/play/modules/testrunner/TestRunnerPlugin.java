@@ -5,6 +5,7 @@ import java.io.File;
 import play.Play;
 import play.PlayPlugin;
 import play.mvc.Router;
+import play.mvc.RouterImpl;
 import play.vfs.VirtualFile;
 
 public class TestRunnerPlugin extends PlayPlugin {
@@ -22,13 +23,13 @@ public class TestRunnerPlugin extends PlayPlugin {
     }
 
     @Override
-    public void onRoutesLoaded() {
-        Router.addRoute("GET", "/@tests", "TestRunner.index");
-        Router.addRoute("GET", "/@tests.list", "TestRunner.list");
-        Router.addRoute("GET", "/@tests/{<.*>test}", "TestRunner.run");
-        Router.addRoute("POST", "/@tests/{<.*>test}", "TestRunner.saveResult");
-        Router.addRoute("GET", "/@tests/emails", "TestRunner.mockEmail");
-        Router.addRoute("GET", "/@tests/cache", "TestRunner.cacheEntry");
+    public void onRoutesLoaded(Router router) {
+        router.addRoute("GET", "/@tests", "TestRunner.index");
+        router.addRoute("GET", "/@tests.list", "TestRunner.list");
+        router.addRoute("GET", "/@tests/{<.*>test}", "TestRunner.run");
+        router.addRoute("POST", "/@tests/{<.*>test}", "TestRunner.saveResult");
+        router.addRoute("GET", "/@tests/emails", "TestRunner.mockEmail");
+        router.addRoute("GET", "/@tests/cache", "TestRunner.cacheEntry");
     }
 
     @Override

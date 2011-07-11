@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.*;
 
 import org.codehaus.groovy.control.CompilationUnit;
@@ -49,6 +50,7 @@ import play.mvc.Http;
 import play.utils.Java;
 import play.mvc.ActionInvoker;
 import play.mvc.Http.Request;
+import play.mvc.AbstractActionDefinition;
 import play.mvc.Router;
 import play.utils.HTML;
 
@@ -437,7 +439,7 @@ public class GroovyTemplate extends BaseTemplate {
         }
 
         private String __reverseWithCheck(String action, boolean absolute) {
-            return Router.reverseWithCheck(action, Play.getVirtualFile(action), absolute);
+            return Router.current.get().reverseWithCheck(action, Play.getVirtualFile(action), absolute);
         }
 
         public String __safe(Object val, String stringValue) {
@@ -504,7 +506,7 @@ public class GroovyTemplate extends BaseTemplate {
                                     throw new NoRouteFoundException(action, null);
                                 }
                                 for (int i = 0; i < ((Object[]) param).length; i++) {
-                                    if (((Object[]) param)[i] instanceof Router.ActionDefinition && ((Object[]) param)[i] != null) {
+                                    if (((Object[]) param)[i] instanceof AbstractActionDefinition && ((Object[]) param)[i] != null) {
                                         Unbinder.unBind(r, ((Object[]) param)[i].toString(), i < names.length ? names[i] : "", actionMethod.getAnnotations());
                                     } else if (isSimpleParam(actionMethod.getParameterTypes()[i])) {
                                         if (((Object[]) param)[i] != null) {
@@ -516,14 +518,12 @@ public class GroovyTemplate extends BaseTemplate {
                                 }
                             }
                         }
-                        Router.ActionDefinition def = Router.reverse(action, r);
+                        AbstractActionDefinition def = Router.current.get().reverse(action, r);
+                        URI url = def.getUri();
                         if (absolute) {
-                            def.absolute();
+                            url = Router.absolutize(url);
                         }
-                        if (template.template.name.endsWith(".xml")) {
-                            def.url = def.url.replace("&", "&amp;");
-                        }
-                        return def;
+                        return url;
                     } catch (ActionNotFoundException e) {
                         throw new NoRouteFoundException(action, null);
                     }

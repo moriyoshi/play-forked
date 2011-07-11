@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.net.URI;
 import java.text.*;
 import java.util.Currency;
 import java.util.Date;
@@ -27,6 +28,7 @@ import play.i18n.Lang;
 import play.i18n.Messages;
 import play.libs.I18N;
 import play.mvc.Http;
+import play.mvc.Router;
 import play.templates.BaseTemplate.RawData;
 import play.utils.HTML;
 
@@ -407,5 +409,13 @@ public class JavaExtensions {
             sb.append(ite.next());
         }
         return sb.toString();
+    }
+
+    public static URI absolute(URI uri) {
+        return Router.absolutize(uri);
+    }
+
+    public static URI secure(URI uri) {
+        return Router.securize(uri);
     }
 }

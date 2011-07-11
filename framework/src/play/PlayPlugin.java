@@ -10,9 +10,10 @@ import java.util.Map;
 import java.util.HashMap;
 import play.classloading.ApplicationClasses.ApplicationClass;
 import play.db.Model;
+import play.mvc.Route;
+import play.mvc.Router;
 import play.mvc.Http.Request;
 import play.mvc.Http.Response;
-import play.mvc.Router.Route;
 import play.mvc.results.Result;
 import play.templates.BaseTemplate;
 import play.templates.Template;
@@ -235,7 +236,7 @@ public abstract class PlayPlugin implements Comparable<PlayPlugin> {
     /**
      * Called after routes loading.
      */
-    public void onRoutesLoaded() {
+    public void onRoutesLoaded(Router route) {
     }
 
     /** 

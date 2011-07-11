@@ -26,8 +26,6 @@ import play.exceptions.ActionNotFoundException;
 import play.exceptions.JavaExecutionException;
 import play.exceptions.PlayException;
 import play.exceptions.UnexpectedException;
-import play.i18n.Lang;
-import play.mvc.Router.Route;
 import play.mvc.results.NoResult;
 import play.mvc.results.Result;
 import play.utils.Java;
@@ -73,7 +71,7 @@ public class ActionInvoker {
         // Route and resolve format if not already done
         if (request.action == null) {
             Play.pluginCollection.routeRequest(request);
-            Route route = Router.route(request);
+            Route route = Router.current.get().route(request);
             Play.pluginCollection.onRequestRouting(route);
         }
         request.resolveFormat();

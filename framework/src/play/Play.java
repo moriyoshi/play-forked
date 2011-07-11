@@ -19,6 +19,7 @@ import play.exceptions.UnexpectedException;
 import play.libs.IO;
 import play.mvc.Http;
 import play.mvc.Router;
+import play.mvc.RouterImpl;
 import play.plugins.PluginCollection;
 import play.templates.TemplateLoader;
 import play.utils.OrderSafeProperties;
@@ -177,6 +178,18 @@ public class Play {
      * as a WAR in an applicationServer
      */
     public static boolean standalonePlayServer = true;
+
+
+    /**
+     * The master router
+     */
+    public static Router router;
+
+
+    /**
+     * Timestamp the routes file was last loaded at.
+     */
+    public static long routeLastLoading = -1;
 
     /**
      * Init the framework
@@ -500,7 +513,7 @@ public class Play {
             Play.classloader.getAllClasses();
 
             // Routes
-            Router.detectChanges(ctxPath);
+            loadRoutes();
 
             // Cache
             Cache.init();
@@ -550,7 +563,6 @@ public class Play {
             started = false;
             pluginCollection.onApplicationStop();
             Cache.stop();
-            Router.lastLoading = 0L;
         }
     }
 
@@ -608,7 +620,7 @@ public class Play {
             if(!pluginCollection.detectClassesChange()) {
                 classloader.detectChanges();
             }
-            Router.detectChanges(ctxPath);
+            refreshRoutes();
             if (conf.lastModified() > startedAt) {
                 start();
                 return;
@@ -622,6 +634,31 @@ public class Play {
         } catch (Exception e) {
             // We have to do a clean refresh
             start();
+        }
+    }
+
+    /**
+     * Loads the routes file. This is called at startup.
+     *
+     * @param prefix The prefix that the path of all routes in this route file start with. This prefix should not end with a '/' character.
+     */
+    public static void loadRoutes() {
+        final RouterImpl router = new RouterImpl(routes, ctxPath);
+        routeLastLoading = System.currentTimeMillis();
+        Play.router = router; 
+        pluginCollection.onRoutesLoaded(router);
+    }
+
+    public static void refreshRoutes() {
+        if (Play.routes.lastModified() > routeLastLoading) {
+            loadRoutes();
+        } else {
+            for (VirtualFile file : Play.modulesRoutes.values()) {
+                if (file.lastModified() > routeLastLoading) {
+                    loadRoutes();
+                    break;
+                }
+            }
         }
     }
 

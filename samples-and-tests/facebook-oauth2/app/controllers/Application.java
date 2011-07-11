@@ -58,7 +58,7 @@ public class Application extends Controller {
     }
 
     static String authURL() {
-        return play.mvc.Router.getFullUrl("Application.auth");
+        return play.mvc.AbstractRouter.current.get().getFullUrl("Application.auth");
     }
 
     static User connected() {

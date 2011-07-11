@@ -135,12 +135,12 @@ public class OpenID {
             if (returnAction != null && returnAction.startsWith("http://")) {
                 url += "&openid.return_to=" + URLEncoder.encode(returnAction, "utf8");
             } else {
-                url += "&openid.return_to=" + URLEncoder.encode(Request.current().getBase() + Router.reverse(returnAction), "utf8");
+                url += "&openid.return_to=" + URLEncoder.encode(Request.current().getBase() + Router.current.get().reverse(returnAction), "utf8");
             }
             if (realmAction != null && realmAction.startsWith("http://")) {
                 url += "&openid.realm=" + URLEncoder.encode(realmAction, "utf8");
             } else {
-                url += "&openid.realm=" + URLEncoder.encode(Request.current().getBase() + Router.reverse(realmAction), "utf8");
+                url += "&openid.realm=" + URLEncoder.encode(Request.current().getBase() + Router.current.get().reverse(realmAction), "utf8");
             }
 
             if (!sregOptional.isEmpty() || !sregRequired.isEmpty()) {

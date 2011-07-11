@@ -152,7 +152,7 @@ public class PlayGrizzlyAdapter extends GrizzlyAdapter {
         request.path = uri.getPath();
         request.querystring = grizzlyRequest.getQueryString() == null ? "" : grizzlyRequest.getQueryString();
 
-        Router.routeOnlyStatic(request);
+        Router.current.get().routeOnlyStatic(request);
 
         if (grizzlyRequest.getHeader("Content-Type") != null) {
             request.contentType = grizzlyRequest.getHeader("Content-Type").split(";")[0].trim().toLowerCase().intern();

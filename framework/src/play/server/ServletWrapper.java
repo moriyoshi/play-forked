@@ -9,11 +9,12 @@ import play.data.validation.Validation;
 import play.exceptions.PlayException;
 import play.exceptions.UnexpectedException;
 import play.libs.MimeTypes;
+import play.mvc.Router;
 import play.mvc.ActionInvoker;
 import play.mvc.Http;
 import play.mvc.Http.Request;
 import play.mvc.Http.Response;
-import play.mvc.Router;
+import play.mvc.RouterImpl;
 import play.mvc.Scope;
 import play.mvc.results.NotFound;
 import play.mvc.results.RenderStatic;
@@ -99,7 +100,7 @@ public class ServletWrapper extends HttpServlet implements ServletContextListene
         // Servlet 2.4 does not allow you to get the context path from the servletcontext...
         if (routerInitializedWithContext) return;
         Play.ctxPath = contextPath;
-        Router.load(contextPath);
+        Play.loadRoutes();
         routerInitializedWithContext = true;
     }
 
@@ -295,7 +296,7 @@ public class ServletWrapper extends HttpServlet implements ServletContextListene
 
 
         Request.current.set(request);
-        Router.routeOnlyStatic(request);
+        Router.current.get().routeOnlyStatic(request);
 
         return request;
     }

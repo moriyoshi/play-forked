@@ -32,7 +32,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import play.Invoker;
 import play.mvc.Controller;
-import play.mvc.Router.ActionDefinition;
+import play.mvc.AbstractActionDefinition;
+import play.mvc.ActionDefinition;
 
 /**
  * Application tests support
@@ -448,15 +449,15 @@ public abstract class FunctionalTest extends BaseTest {
 
     public static class URL {
 
-        ActionDefinition actionDefinition;
+        AbstractActionDefinition actionDefinition;
 
-        URL(ActionDefinition actionDefinition) {
+        URL(AbstractActionDefinition actionDefinition) {
             this.actionDefinition = actionDefinition;
         }
 
         @Override
         public String toString() {
-            return actionDefinition.url;
+            return actionDefinition.getUri().toString();
         }
 
     }

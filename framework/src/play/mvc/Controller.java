@@ -28,7 +28,6 @@ import play.data.validation.Validation;
 import play.exceptions.*;
 import play.libs.Time;
 import play.mvc.Http.Request;
-import play.mvc.Router.ActionDefinition;
 import play.mvc.results.BadRequest;
 import play.mvc.results.Error;
 import play.mvc.results.Forbidden;
@@ -510,7 +509,7 @@ public class Controller implements ControllerSupport {
             if (vf == null || !vf.exists()) {
                 throw new NoRouteFoundException(file);
             }
-            throw new RedirectToStatic(Router.reverse(Play.getVirtualFile(file)));
+            throw new RedirectToStatic(Router.current.get().reverse(Play.getVirtualFile(file)));
         } catch (NoRouteFoundException e) {
             StackTraceElement element = PlayException.getInterestingStrackTraceElement(e);
             if (element != null) {
@@ -580,17 +579,14 @@ public class Controller implements ControllerSupport {
             }
             try {
 
-                ActionDefinition actionDefinition = Router.reverse(action, newArgs);
+                AbstractActionDefinition actionDefinition = Router.current.get().reverse(action, newArgs);
 
                 if (_currentReverse.get() != null) {
-                    ActionDefinition currentActionDefinition = _currentReverse.get();
-                    currentActionDefinition.action = actionDefinition.action;
-                    currentActionDefinition.url = actionDefinition.url;
-                    currentActionDefinition.method = actionDefinition.method;
-                    currentActionDefinition.star = actionDefinition.star;
-                    currentActionDefinition.args = actionDefinition.args;
-
-                    _currentReverse.remove();
+                    _currentReverse.set(new ActionDefinition(
+                        actionDefinition.getRouter(),
+                        actionDefinition.getRoute(),
+                        actionDefinition.getAction(),
+                        actionDefinition.getArgs()));
                 } else {
                     throw new Redirect(actionDefinition.toString(), permanent);
                 }

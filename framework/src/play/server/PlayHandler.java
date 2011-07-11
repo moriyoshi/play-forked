@@ -157,12 +157,13 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
                 Logger.trace("init: begin");
             }
 
+            if (Play.mode == Play.Mode.DEV) {
+                Play.refreshRoutes();
+            }
+            Router.current.set(Play.router);
             Request.current.set(request);
             Response.current.set(response);
             try {
-                if (Play.mode == Play.Mode.DEV) {
-                    Router.detectChanges(Play.ctxPath);
-                }
                 if (Play.mode == Play.Mode.PROD && staticPathsCache.containsKey(request.path)) {
                     RenderStatic rs = null;
                     synchronized (staticPathsCache) {
@@ -174,7 +175,7 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
                     }
                     return false;
                 }
-                Router.routeOnlyStatic(request);
+                Router.current.get().routeOnlyStatic(request);
                 super.init();
             } catch (NotFound nf) {
                 serve404(nf, ctx, request, nettyRequest);
@@ -1094,7 +1095,7 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
 
         // Route the websocket request
         request.method = "WS";
-        Map<String, String> route = Router.route(request.method, request.path);
+        Map<String, String> route = Router.current.get().route(request.method, request.path);
         if (!route.containsKey("action")) {
             // No route found to handle this websocket connection
             ctx.getChannel().write(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND));

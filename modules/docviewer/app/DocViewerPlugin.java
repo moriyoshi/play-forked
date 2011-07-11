@@ -37,15 +37,15 @@ public class DocViewerPlugin extends PlayPlugin {
     }
 
     @Override
-    public void onRoutesLoaded() {
-        Router.prependRoute("GET", "/@documentation/?", "PlayDocumentation.index");
-        Router.prependRoute("GET", "/@documentation/{id}", "PlayDocumentation.page");
-        Router.prependRoute("GET", "/@documentation/images/{name}", "PlayDocumentation.image");
-        Router.prependRoute("GET", "/@documentation/files/{name}", "PlayDocumentation.file");
-        Router.prependRoute("GET", "/@documentation/modules/{module}/{id}", "PlayDocumentation.page");
-        Router.prependRoute("GET", "/@documentation/modules/{module}/images/{name}", "PlayDocumentation.image");
-        Router.prependRoute("GET", "/@documentation/modules/{module}/files/{name}", "PlayDocumentation.file");
-        Router.prependRoute("GET", "/@documentation/cheatsheet/{category}", "PlayDocumentation.cheatSheet");
+    public void onRoutesLoaded(Router router) {
+        router.prependRoute("GET", "/@documentation/?", "PlayDocumentation.index");
+        router.prependRoute("GET", "/@documentation/{id}", "PlayDocumentation.page");
+        router.prependRoute("GET", "/@documentation/images/{name}", "PlayDocumentation.image");
+        router.prependRoute("GET", "/@documentation/files/{name}", "PlayDocumentation.file");
+        router.prependRoute("GET", "/@documentation/modules/{module}/{id}", "PlayDocumentation.page");
+        router.prependRoute("GET", "/@documentation/modules/{module}/images/{name}", "PlayDocumentation.image");
+        router.prependRoute("GET", "/@documentation/modules/{module}/files/{name}", "PlayDocumentation.file");
+        router.prependRoute("GET", "/@documentation/cheatsheet/{category}", "PlayDocumentation.cheatSheet");
     }
 
 }
