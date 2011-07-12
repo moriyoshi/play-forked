@@ -377,10 +377,15 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
             nettyResponse.setHeader(SERVER, signature);
         }
 
-        if (response.contentType != null) {
-            nettyResponse.setHeader(CONTENT_TYPE, response.contentType + (response.contentType.startsWith("text/") && !response.contentType.contains("charset") ? "; charset=" + response.encoding : ""));
-        } else {
-            nettyResponse.setHeader(CONTENT_TYPE, "text/plain; charset=" + response.encoding);
+        {
+            HTTP.ContentTypeWithEncoding ctwe = HTTP.parseContentType(response.contentType, "text/plain", response.encoding);
+            String contentTypeHeaderValue = null;
+            if (MimeTypes.isTextualMimeType(ctwe.contentType)) {
+                contentTypeHeaderValue = ctwe.contentType + "; charset=" + ctwe.encoding;
+            } else {
+                contentTypeHeaderValue = ctwe.contentType;
+            }
+            nettyResponse.setHeader(CONTENT_TYPE, contentTypeHeaderValue);
         }
 
         addToResponse(response, nettyResponse);

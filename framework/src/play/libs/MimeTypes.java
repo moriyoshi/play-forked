@@ -133,4 +133,7 @@ public class MimeTypes {
         return mimetypes;
     }
 
+    public static boolean isTextualMimeType(String mimeType) {
+        return mimeType.startsWith("text/");
+    }
 }
