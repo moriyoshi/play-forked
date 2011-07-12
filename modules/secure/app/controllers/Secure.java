@@ -183,7 +183,7 @@ public class Secure extends Controller {
 
         private static Object invoke(String m, Object... args) throws Throwable {
             Class security = null;
-            List<Class> classes = Play.classloader.getAssignableClasses(Security.class);
+            List<Class<? extends Security>> classes = Play.classloader.getAssignableClasses(Security.class);
             if(classes.size() == 0) {
                 security = Security.class;
             } else {
