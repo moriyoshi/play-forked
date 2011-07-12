@@ -151,6 +151,7 @@ public class F {
             return result;
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B> Promise<F.Tuple<A, B>> wait2(Promise<A> tA, Promise<B> tB) {
             final Promise<F.Tuple<A, B>> result = new Promise<F.Tuple<A, B>>();
             final Promise<List<Object>> t = waitAll(new Promise[]{tA, tB});
@@ -158,12 +159,13 @@ public class F {
 
                 public void invoke(Promise<List<Object>> completed) {
                     List<Object> values = completed.getOrNull();
-                    result.invoke(new F.Tuple((A) values.get(0), (B) values.get(1)));
+                    result.invoke(new F.Tuple<A, B>((A) values.get(0), (B) values.get(1)));
                 }
             });
             return result;
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C> Promise<F.T3<A, B, C>> wait3(Promise<A> tA, Promise<B> tB, Promise<C> tC) {
             final Promise<F.T3<A, B, C>> result = new Promise<F.T3<A, B, C>>();
             final Promise<List<Object>> t = waitAll(new Promise[]{tA, tB, tC});
@@ -171,12 +173,13 @@ public class F {
 
                 public void invoke(Promise<List<Object>> completed) {
                     List<Object> values = completed.getOrNull();
-                    result.invoke(new F.T3((A) values.get(0), (B) values.get(1), (C) values.get(2)));
+                    result.invoke(new F.T3<A, B, C>((A) values.get(0), (B) values.get(1), (C) values.get(2)));
                 }
             });
             return result;
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D> Promise<F.T4<A, B, C, D>> wait4(Promise<A> tA, Promise<B> tB, Promise<C> tC, Promise<D> tD) {
             final Promise<F.T4<A, B, C, D>> result = new Promise<F.T4<A, B, C, D>>();
             final Promise<List<Object>> t = waitAll(new Promise[]{tA, tB, tC, tD});
@@ -184,12 +187,13 @@ public class F {
 
                 public void invoke(Promise<List<Object>> completed) {
                     List<Object> values = completed.getOrNull();
-                    result.invoke(new F.T4((A) values.get(0), (B) values.get(1), (C) values.get(2), (D) values.get(3)));
+                    result.invoke(new F.T4<A, B, C, D>((A) values.get(0), (B) values.get(1), (C) values.get(2), (D) values.get(3)));
                 }
             });
             return result;
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D, E> Promise<F.T5<A, B, C, D, E>> wait5(Promise<A> tA, Promise<B> tB, Promise<C> tC, Promise<D> tD, Promise<E> tE) {
             final Promise<F.T5<A, B, C, D, E>> result = new Promise<F.T5<A, B, C, D, E>>();
             final Promise<List<Object>> t = waitAll(new Promise[]{tA, tB, tC, tD, tE});
@@ -197,12 +201,13 @@ public class F {
 
                 public void invoke(Promise<List<Object>> completed) {
                     List<Object> values = completed.getOrNull();
-                    result.invoke(new F.T5((A) values.get(0), (B) values.get(1), (C) values.get(2), (D) values.get(3), (E) values.get(4)));
+                    result.invoke(new F.T5<A, B, C, D, E>((A) values.get(0), (B) values.get(1), (C) values.get(2), (D) values.get(3), (E) values.get(4)));
                 }
             });
             return result;
         }
 
+        @SuppressWarnings("unchecked")
         private static Promise<F.Tuple<Integer, Promise<Object>>> waitEitherInternal(final Promise<?>... futures) {
             final Promise<F.Tuple<Integer, Promise<Object>>> result = new Promise<F.Tuple<Integer, Promise<Object>>>();
             for (int i = 0; i < futures.length; i++) {
@@ -210,7 +215,7 @@ public class F {
                 ((Promise<Object>) futures[i]).onRedeem(new F.Action<Promise<Object>>() {
 
                     public void invoke(Promise<Object> completed) {
-                        result.invoke(new F.Tuple(index, completed));
+                        result.invoke(new F.Tuple<Integer, Promise<Object> >(index, completed));
                     }
                 });
             }
@@ -223,6 +228,7 @@ public class F {
 
             t.onRedeem(new F.Action<Promise<F.Tuple<Integer, Promise<Object>>>>() {
 
+                @SuppressWarnings("unchecked")
                 public void invoke(Promise<F.Tuple<Integer, Promise<Object>>> completed) {
                     F.Tuple<Integer, Promise<Object>> value = completed.getOrNull();
                     switch (value._1) {
@@ -246,6 +252,7 @@ public class F {
 
             t.onRedeem(new F.Action<Promise<F.Tuple<Integer, Promise<Object>>>>() {
 
+                @SuppressWarnings("unchecked")
                 public void invoke(Promise<F.Tuple<Integer, Promise<Object>>> completed) {
                     F.Tuple<Integer, Promise<Object>> value = completed.getOrNull();
                     switch (value._1) {
@@ -272,6 +279,7 @@ public class F {
 
             t.onRedeem(new F.Action<Promise<F.Tuple<Integer, Promise<Object>>>>() {
 
+                @SuppressWarnings("unchecked")
                 public void invoke(Promise<F.Tuple<Integer, Promise<Object>>> completed) {
                     F.Tuple<Integer, Promise<Object>> value = completed.getOrNull();
                     switch (value._1) {
@@ -301,6 +309,7 @@ public class F {
 
             t.onRedeem(new F.Action<Promise<F.Tuple<Integer, Promise<Object>>>>() {
 
+                @SuppressWarnings("unchecked")
                 public void invoke(Promise<F.Tuple<Integer, Promise<Object>>> completed) {
                     F.Tuple<Integer, Promise<Object>> value = completed.getOrNull();
                     switch (value._1) {
@@ -523,9 +532,9 @@ public class F {
             return filter;
         }
 
-        public synchronized List<IndexedEvent> availableEvents(long lastEventSeen) {
-            List<IndexedEvent> result = new ArrayList<IndexedEvent>();
-            for (IndexedEvent event : events) {
+        public synchronized List<IndexedEvent<?>> availableEvents(long lastEventSeen) {
+            List<IndexedEvent<?>> result = new ArrayList<IndexedEvent<?>>();
+            for (IndexedEvent<?> event : events) {
                 if (event.id > lastEventSeen) {
                     result.add(event);
                 }
@@ -545,7 +554,7 @@ public class F {
             if (events.size() >= archiveSize) {
                 events.poll();
             }
-            events.offer(new IndexedEvent(event));
+            events.offer(new IndexedEvent<T>(event));
             notifyNewEvent();
             for (EventStream<T> eventStream : pipedStreams) {
                 eventStream.publish(event);
@@ -605,6 +614,7 @@ public class F {
 
         public abstract T get();
 
+        @SuppressWarnings("unchecked")
         public static <T> None<T> None() {
             return (None<T>) (Object) None;
         }
@@ -615,7 +625,7 @@ public class F {
     }
 
     public static <A> Some<A> Some(A a) {
-        return new Some(a);
+        return new Some<A>(a);
     }
 
     public static class None<T> extends Option<T> {
@@ -679,12 +689,14 @@ public class F {
             this._2 = _2;
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B> Either<A, B> _1(A value) {
-            return new Either(Some(value), None);
+            return new Either<A, B>(Some(value), (Option<B>) None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B> Either<A, B> _2(B value) {
-            return new Either(None, Some(value));
+            return new Either<A, B>((Option<A>) None, Some(value));
         }
 
         @Override
@@ -712,16 +724,19 @@ public class F {
             this._3 = _3;
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C> E3<A, B, C> _1(A value) {
-            return new E3(Some(value), None, None);
+            return new E3<A, B, C>(Some(value), (Option<B>)None, (Option<C>)None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C> E3<A, B, C> _2(B value) {
-            return new E3(None, Some(value), None);
+            return new E3<A, B, C>((Option<A>)None, Some(value), (Option<C>)None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C> E3<A, B, C> _3(C value) {
-            return new E3(None, None, Some(value));
+            return new E3<A, B, C>((Option<A>)None, (Option<B>)None, Some(value));
         }
 
         @Override
@@ -744,20 +759,24 @@ public class F {
             this._4 = _4;
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D> E4<A, B, C, D> _1(A value) {
-            return new E4(Option.Some(value), None, None, None);
+            return new E4<A, B, C, D>(Option.Some(value), (Option<B>)None, (Option<C>)None, (Option<D>)None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D> E4<A, B, C, D> _2(B value) {
-            return new E4(None, Some(value), None, None);
+            return new E4<A, B, C, D>((Option<A>)None, Some(value), (Option<C>)None, (Option<D>)None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D> E4<A, B, C, D> _3(C value) {
-            return new E4(None, None, Some(value), None);
+            return new E4<A, B, C, D>((Option<A>)None, (Option<B>)None, Some(value), (Option<D>)None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D> E4<A, B, C, D> _4(D value) {
-            return new E4(None, None, None, Some(value));
+            return new E4<A, B, C, D>((Option<A>)None, (Option<B>)None, (Option<C>)None, Some(value));
         }
 
         @Override
@@ -782,24 +801,29 @@ public class F {
             this._5 = _5;
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D, E> E5<A, B, C, D, E> _1(A value) {
-            return new E5(Option.Some(value), None, None, None, None);
+            return new E5<A, B, C, D, E>(Option.Some(value), (Option<B>)None, (Option<C>)None, (Option<D>)None, (Option<E>)None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D, E> E5<A, B, C, D, E> _2(B value) {
-            return new E5(None, Option.Some(value), None, None, None);
+            return new E5<A, B, C, D, E>((Option<A>)None, Option.Some(value), (Option<C>)None, (Option<D>)None, (Option<E>)None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D, E> E5<A, B, C, D, E> _3(C value) {
-            return new E5(None, None, Option.Some(value), None, None);
+            return new E5<A, B, C, D, E>((Option<A>)None, (Option<B>)None, Option.Some(value), (Option<D>)None, (Option<E>)None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D, E> E5<A, B, C, D, E> _4(D value) {
-            return new E5(None, None, None, Option.Some(value), None);
+            return new E5<A, B, C, D, E>((Option<A>)None, (Option<B>)None, (Option<C>)None, Option.Some(value), (Option<E>)None);
         }
 
+        @SuppressWarnings("unchecked")
         public static <A, B, C, D, E> E5<A, B, C, D, E> _5(E value) {
-            return new E5(None, None, None, None, Option.Some(value));
+            return new E5<A, B, C, D, E>((Option<A>)None, (Option<B>)None, (Option<C>)None, (Option<D>)None, Option.Some(value));
         }
 
         @Override
@@ -825,7 +849,7 @@ public class F {
     }
 
     public static <A, B> Tuple<A, B> Tuple(A a, B b) {
-        return new Tuple(a, b);
+        return new Tuple<A, B>(a, b);
     }
 
     public static class T2<A, B> extends Tuple<A, B> {
@@ -836,7 +860,7 @@ public class F {
     }
 
     public static <A, B> T2<A, B> T2(A a, B b) {
-        return new T2(a, b);
+        return new T2<A, B>(a, b);
     }
 
     public static class T3<A, B, C> {
@@ -858,7 +882,7 @@ public class F {
     }
 
     public static <A, B, C> T3<A, B, C> T3(A a, B b, C c) {
-        return new T3(a, b, c);
+        return new T3<A, B, C>(a, b, c);
     }
 
     public static class T4<A, B, C, D> {
@@ -949,10 +973,11 @@ public class F {
         public static <K> Matcher<Object, K> ClassOf(final Class<K> clazz) {
             return new Matcher<Object, K>() {
 
+                @SuppressWarnings("unchecked")
                 @Override
                 public Option<K> match(Object o) {
-                    if (o instanceof Option && ((Option) o).isDefined()) {
-                        o = ((Option) o).get();
+                    if (o instanceof Option && ((Option<?>) o).isDefined()) {
+                        o = ((Option<?>) o).get();
                     }
                     if (clazz.isInstance(o)) {
                         return Option.Some((K) o);

@@ -43,12 +43,12 @@ public class Mailer {
         if (map == null) {
             throw new UnexpectedException("Mailer not instrumented ?");
         }
-        List recipientsList = (List<String>) map.get("recipients");
+        List<String> recipientsList = (List<String>) map.get("recipients");
         if (recipientsList == null) {
             recipientsList = new ArrayList<String>();
             map.put("recipients", recipientsList);
         }
-        recipientsList.addAll(Arrays.asList(recipients));
+        recipientsList.addAll((List<String>)(List<?>)Arrays.asList(recipients));
         infos.set(map);
     }
 
@@ -58,12 +58,12 @@ public class Mailer {
         if (map == null) {
             throw new UnexpectedException("Mailer not instrumented ?");
         }
-        List bccsList = (List<String>) map.get("bccs");
+        List<String> bccsList = (List<String>) map.get("bccs");
         if (bccsList == null) {
             bccsList = new ArrayList<String>();
             map.put("bccs", bccsList);
         }
-        bccsList.addAll(Arrays.asList(bccs));
+        bccsList.addAll((List<String>)(List<?>)Arrays.asList(bccs));
         infos.set(map);
     }
 
@@ -73,12 +73,12 @@ public class Mailer {
         if (map == null) {
             throw new UnexpectedException("Mailer not instrumented ?");
         }
-        List ccsList = (List<String>) map.get("ccs");
+        List<String> ccsList = (List<String>) map.get("ccs");
         if (ccsList == null) {
             ccsList = new ArrayList<String>();
             map.put("ccs", ccsList);
         }
-        ccsList.addAll(Arrays.asList(ccs));
+        ccsList.addAll((List<String>)(List<?>)Arrays.asList(ccs));
         infos.set(map);
     }
 

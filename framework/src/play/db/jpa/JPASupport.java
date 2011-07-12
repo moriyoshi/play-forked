@@ -9,6 +9,11 @@ import javax.persistence.Query;
 public class JPASupport extends GenericModel {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Use play.db.jpa.GenericModel.JPAQuery insteads
      */
     @Deprecated

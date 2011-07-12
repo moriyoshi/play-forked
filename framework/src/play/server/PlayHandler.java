@@ -499,7 +499,6 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
             Logger.trace("parseRequest: begin");
             Logger.trace("parseRequest: URI = " + nettyRequest.getUri());
         }
-        final int index = nettyRequest.getUri().indexOf("?");
         String uri = nettyRequest.getUri();
         // Remove domain and port from URI if it's present.
         if (uri.startsWith("http://") || uri.startsWith("https://")) {

@@ -2,6 +2,11 @@ package play.exceptions;
 
 public class ContinuationsException extends PlayException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public ContinuationsException(String message) {
         super(message);
     }

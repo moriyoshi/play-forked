@@ -27,7 +27,7 @@ import play.utils.PThreadFactory;
 public class JobsPlugin extends PlayPlugin {
 
     public static ScheduledThreadPoolExecutor executor = null;
-    public static List<Job> scheduledJobs = null;
+    public static List<Job<?>> scheduledJobs = null;
 
     @Override
     public String getStatus() {
@@ -50,7 +50,7 @@ public class JobsPlugin extends PlayPlugin {
             out.println();
             out.println("Scheduled jobs ("+scheduledJobs.size()+"):");
             out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            for (Job job : scheduledJobs) {
+            for (Job<?> job : scheduledJobs) {
                 out.print(job.getClass().getName());
                 if (job.getClass().isAnnotationPresent(OnApplicationStart.class)) {
                     OnApplicationStart appStartAnnotation = job.getClass().getAnnotation(OnApplicationStart.class);
@@ -86,8 +86,8 @@ public class JobsPlugin extends PlayPlugin {
             out.println("Waiting jobs:");
             out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             for (Object o : executor.getQueue()) {
-                ScheduledFuture task = (ScheduledFuture)o;
-                out.println(Java.extractUnderlyingCallable((FutureTask)task) + " will run in " + task.getDelay(TimeUnit.SECONDS) + " seconds");        
+                ScheduledFuture<?> task = (ScheduledFuture<?>)o;
+                out.println(Java.extractUnderlyingCallable((FutureTask<?>)task) + " will run in " + task.getDelay(TimeUnit.SECONDS) + " seconds");        
             }
         }
         return sw.toString();
@@ -97,12 +97,12 @@ public class JobsPlugin extends PlayPlugin {
     @Override
     public void afterApplicationStart() {
         List<Class<?>> jobs = new ArrayList<Class<?>>();
-        for (Class clazz : Play.classloader.getAllClasses()) {
+        for (Class<?> clazz : Play.classloader.getAllClasses()) {
             if (Job.class.isAssignableFrom(clazz)) {
                 jobs.add(clazz);
             }
         }
-        scheduledJobs = new ArrayList<Job>();
+        scheduledJobs = new ArrayList<Job<?>>();
         for (final Class<?> clazz : jobs) {
             // @OnApplicationStart
             if (clazz.isAnnotationPresent(OnApplicationStart.class)) {
@@ -137,7 +137,7 @@ public class JobsPlugin extends PlayPlugin {
                         scheduledJobs.add(job);
                         //start running job now in the background
                         @SuppressWarnings("unchecked")
-                        Callable<Job> callable = (Callable<Job>)job;
+                        Callable<Job<?>> callable = (Callable<Job<?>>)job;
                         executor.submit(callable);
                     } catch (InstantiationException ex) {
                         throw new UnexpectedException("Cannot instanciate Job " + clazz.getName());
@@ -162,7 +162,7 @@ public class JobsPlugin extends PlayPlugin {
             // @Every
             if (clazz.isAnnotationPresent(Every.class)) {
                 try {
-                    Job job = (Job) clazz.newInstance();
+                    Job<?> job = (Job<?>) clazz.newInstance();
                     scheduledJobs.add(job);
                     String value = job.getClass().getAnnotation(Every.class).value();
                     if (value.startsWith("cron.")) {

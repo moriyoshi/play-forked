@@ -24,7 +24,7 @@ public abstract class BaseTemplate extends Template {
     public String compiledSource;
     public Map<Integer, Integer> linesMatrix = new HashMap<Integer, Integer>();
     public Set<Integer> doBodyLines = new HashSet<Integer>();
-    public Class compiledTemplate;
+    public Class<?> compiledTemplate;
     public String compiledTemplateName;
     public Long timestamp = System.currentTimeMillis();
 

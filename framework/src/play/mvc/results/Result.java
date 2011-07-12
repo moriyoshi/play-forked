@@ -8,6 +8,11 @@ import play.utils.FastRuntimeException;
  */
 public abstract class Result extends FastRuntimeException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public Result() {
         super();
     }

@@ -37,7 +37,7 @@ import play.utils.HTML;
  */
 public class JavaExtensions {
 
-    public static Object[] enumValues(Class clazz) {
+    public static Object[] enumValues(Class<Object> clazz) {
         return clazz.getEnumConstants();
     }
 
@@ -122,14 +122,14 @@ public class JavaExtensions {
         return new RawData("");
     }
 
-    public static RawData asAttr(Map attributes, Object condition) {
+    public static RawData asAttr(Map<?, ?> attributes, Object condition) {
         if (eval(condition)) {
             return asAttr(attributes);
         }
         return new RawData("");
     }
 
-    public static RawData asAttr(Map attributes) {
+    public static RawData asAttr(Map<?, ?> attributes) {
         StringBuffer buf = new StringBuffer();
         for (Object key : attributes.keySet()) {
             buf.append(key + "=\"" + attributes.get(key) + "\" ");
@@ -144,7 +144,7 @@ public class JavaExtensions {
         if (condition instanceof Boolean && !(Boolean) condition) {
             return false;
         }
-        if (condition instanceof Collection && ((Collection) condition).size() == 0) {
+        if (condition instanceof Collection && ((Collection<?>) condition).size() == 0) {
             return false;
         }
         if (condition instanceof String && condition.toString().equals("")) {
@@ -319,7 +319,7 @@ public class JavaExtensions {
         return "";
     }
 
-    public static String pluralize(Collection n) {
+    public static String pluralize(Collection<?> n) {
         return pluralize(n.size());
     }
 
@@ -331,7 +331,7 @@ public class JavaExtensions {
         return "";
     }
 
-    public static String pluralize(Collection n, String plural) {
+    public static String pluralize(Collection<?> n, String plural) {
         return pluralize(n.size(), plural);
     }
 
@@ -343,7 +343,7 @@ public class JavaExtensions {
         return forms[0];
     }
 
-    public static String pluralize(Collection n, String[] forms) {
+    public static String pluralize(Collection<?> n, String[] forms) {
         return pluralize(n.size(), forms);
     }
 
@@ -395,12 +395,12 @@ public class JavaExtensions {
      * concatenate items of a collection as a string separated with <tt>separator</tt>
      *  items toString() method should be implemented to provide a string representation
      */
-    public static String join(Collection items, String separator) {
+    public static String join(Collection<?> items, String separator) {
         if (items == null) {
             return "";
         }
         StringBuffer sb = new StringBuffer();
-        Iterator ite = items.iterator();
+        Iterator<?> ite = items.iterator();
         int i = 0;
         while (ite.hasNext()) {
             if (i++ > 0) {

@@ -167,7 +167,7 @@ public class ApplicationCompiler {
                     }
 
                     char[] fileName = name.toCharArray();
-                    ApplicationClass applicationClass = applicationClasses.getApplicationClass(name);
+                    ApplicationClass<?> applicationClass = applicationClasses.getApplicationClass(name);
 
                     // ApplicationClass exists
                     if (applicationClass != null) {

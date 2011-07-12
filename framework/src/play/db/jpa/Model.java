@@ -11,6 +11,10 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class Model extends GenericModel {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue
     public Long id;

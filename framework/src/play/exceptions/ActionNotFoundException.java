@@ -5,6 +5,10 @@ package play.exceptions;
  */
 public class ActionNotFoundException extends PlayException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String action;
    
     public ActionNotFoundException(String action, Throwable cause) {

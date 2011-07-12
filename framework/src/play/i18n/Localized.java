@@ -28,9 +28,8 @@ public class Localized<T> {
         return this.values.get(lang);
     }
 
-    @SuppressWarnings("unchecked")
     public Set<T> values() {
-        return new HashSet(values.values());
+        return new HashSet<T>(values.values());
     }
 
     public Set<String> lang() {

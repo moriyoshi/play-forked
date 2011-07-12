@@ -16,6 +16,11 @@ import play.templates.TemplateLoader;
  */
 public class Forbidden extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public Forbidden(String reason) {
         super(reason);
     }

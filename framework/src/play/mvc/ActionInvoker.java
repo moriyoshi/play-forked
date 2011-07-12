@@ -81,8 +81,8 @@ public class ActionInvoker {
             Method actionMethod = null;
             Object[] ca = getActionMethod(request.action);
             actionMethod = (Method) ca[1];
-            request.controller = ((Class) ca[0]).getName().substring(12).replace("$", "");
-            request.controllerClass = ((Class) ca[0]);
+            request.controller = ((Class<?>) ca[0]).getName().substring(12).replace("$", "");
+            request.controllerClass = ((Class<? extends Controller>) ca[0]);
             request.actionMethod = actionMethod.getName();
             request.action = request.controller + "." + request.actionMethod;
             request.invokedMethod = actionMethod;
@@ -179,11 +179,11 @@ public class ActionInvoker {
                             });
                             ControllerInstrumentation.stopActionCall();
                             for (Method mCatch : catches) {
-                                Class[] exceptions = mCatch.getAnnotation(Catch.class).value();
+                                Class<?>[] exceptions = mCatch.getAnnotation(Catch.class).value();
                                 if (exceptions.length == 0) {
                                     exceptions = new Class[]{Exception.class};
                                 }
-                                for (Class exception : exceptions) {
+                                for (Class<?> exception : exceptions) {
                                     if (exception.isInstance(args[0])) {
                                         mCatch.setAccessible(true);
                                         inferResult(invokeControllerMethod(mCatch, args));
@@ -416,7 +416,7 @@ public class ActionInvoker {
                     aFinally.setAccessible(true);
 
                     //check if method accepts Throwable as only parameter
-                    Class[] parameterTypes = aFinally.getParameterTypes();
+                    Class<?>[] parameterTypes = aFinally.getParameterTypes();
                     if (parameterTypes.length == 1 && parameterTypes[0] == Throwable.class) {
                         //invoking @Finally method with caughtException as parameter
                         invokeControllerMethod(aFinally, new Object[]{caughtException});
@@ -513,7 +513,7 @@ public class ActionInvoker {
 
             // Action0
             instance = Http.Request.current().args.get(A);
-            Future f = (Future) Http.Request.current().args.get(F);
+            Future<?> f = (Future<?>) Http.Request.current().args.get(F);
             if (f == null) {
                 method = instance.getClass().getDeclaredMethod("invoke");
                 method.setAccessible(true);
@@ -557,7 +557,7 @@ public class ActionInvoker {
                     throw new Suspend(((Integer) trigger).longValue());
                 }
                 if (trigger instanceof Future) {
-                    throw new Suspend((Future) trigger);
+                    throw new Suspend((Future<?>) trigger);
                 }
 
                 throw new UnexpectedException("Unexpected continuation trigger -> " + trigger);
@@ -571,22 +571,23 @@ public class ActionInvoker {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public static Object[] getActionMethod(String fullAction) {
         Method actionMethod = null;
-        Class controllerClass = null;
+        Class<? extends Controller> controllerClass = null;
         try {
             if (!fullAction.startsWith("controllers.")) {
                 fullAction = "controllers." + fullAction;
             }
             String controller = fullAction.substring(0, fullAction.lastIndexOf("."));
             String action = fullAction.substring(fullAction.lastIndexOf(".") + 1);
-            controllerClass = Play.classloader.getClassIgnoreCase(controller);
+            controllerClass = (Class<? extends Controller>)Play.classloader.getClassIgnoreCase(controller);
             if (controllerClass == null) {
                 throw new ActionNotFoundException(fullAction, new Exception("Controller " + controller + " not found"));
             }
             if (!ControllerSupport.class.isAssignableFrom(controllerClass)) {
                 // Try the scala way
-                controllerClass = Play.classloader.getClassIgnoreCase(controller + "$");
+                controllerClass = (Class<? extends Controller>)Play.classloader.getClassIgnoreCase(controller + "$");
                 if (!ControllerSupport.class.isAssignableFrom(controllerClass)) {
                     throw new ActionNotFoundException(fullAction, new Exception("class " + controller + " does not extend play.mvc.Controller"));
                 }

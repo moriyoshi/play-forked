@@ -2,9 +2,7 @@ package play.classloading.enhancers;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
@@ -29,7 +27,7 @@ public class ContinuationEnhancer extends Enhancer {
     }
 
     public static boolean isEnhanced(String appClassName) {
-        ApplicationClass appClass = Play.classes.getApplicationClass( appClassName);
+        ApplicationClass<?> appClass = Play.classes.getApplicationClass( appClassName);
         if ( appClass == null) {
             return false;
         }
@@ -39,7 +37,7 @@ public class ContinuationEnhancer extends Enhancer {
     }
 
     @Override
-    public void enhanceThisClass(ApplicationClass applicationClass) throws Exception {
+    public void enhanceThisClass(ApplicationClass<?> applicationClass) throws Exception {
         if (isScala(applicationClass)) {
             return;
         }

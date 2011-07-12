@@ -76,6 +76,10 @@ public class Http {
     public static class Header implements Serializable {
 
         /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+        /**
          * Header name
          */
         public String name;
@@ -117,6 +121,11 @@ public class Http {
      * An HTTP Cookie
      */
     public static class Cookie implements Serializable {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
 
         /**
          * When creating cookie without specifying domain,
@@ -168,6 +177,10 @@ public class Http {
      */
     public static class Request implements Serializable {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
         /**
          * Server host
          */

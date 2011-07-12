@@ -134,15 +134,15 @@ public class HumanReadyLogger implements MessageLogger, TransferListener {
         niceLog(string, Message.MSG_ERR);
     }
 
-    public List getProblems() {
+    public List<?> getProblems() {
         return null;
     }
 
-    public List getWarns() {
+    public List<?> getWarns() {
         return null;
     }
 
-    public List getErrors() {
+    public List<?> getErrors() {
         return null;
     }
 

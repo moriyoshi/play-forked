@@ -29,7 +29,7 @@ import play.exceptions.UnexpectedException;
 public class PropertiesEnhancer extends Enhancer {
 
     @Override
-    public void enhanceThisClass(ApplicationClass applicationClass) throws Exception {
+    public void enhanceThisClass(ApplicationClass<?> applicationClass) throws Exception {
 
         final CtClass ctClass = makeClass(applicationClass);
         if (ctClass.isInterface()) {

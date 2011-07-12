@@ -9,6 +9,10 @@ import play.templates.Template;
  */
 public abstract class TemplateException extends PlayException implements SourceAttachment {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private Template template;
     private Integer lineNumber;
 

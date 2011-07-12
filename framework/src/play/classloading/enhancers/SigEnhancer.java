@@ -16,7 +16,7 @@ import play.classloading.ApplicationClasses.ApplicationClass;
 public class SigEnhancer extends Enhancer {
 
     @Override
-    public void enhanceThisClass(ApplicationClass applicationClass) throws Exception {
+    public void enhanceThisClass(ApplicationClass<?> applicationClass) throws Exception {
         if (isScala(applicationClass)) {
             return;
         }

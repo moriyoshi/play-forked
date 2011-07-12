@@ -7,6 +7,10 @@ import play.vfs.VirtualFile;
 
 public class YAMLException extends PlayException implements SourceAttachment {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     ScannerException e;
     VirtualFile yaml;
 

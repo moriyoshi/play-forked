@@ -17,6 +17,10 @@ import play.templates.TemplateLoader;
  */
 public class Error extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private int status;
 
     public Error(String reason) {

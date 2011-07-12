@@ -9,6 +9,10 @@ import play.mvc.Http.Response;
  */
 public class Unauthorized extends Result {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String realm;
     
     public Unauthorized(String realm) {

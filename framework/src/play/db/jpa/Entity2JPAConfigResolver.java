@@ -12,9 +12,9 @@ import play.db.DBConfig;
 public class Entity2JPAConfigResolver {
 
     private static ApplicationClassloaderState ourClassloaderState = null;
-    private static Map<Class, String> class2ConfigNameMapping = new HashMap<Class, String>();
+    private static Map<Class<?>, String> class2ConfigNameMapping = new HashMap<Class<?>, String>();
 
-    protected synchronized static String getJPAConfigNameForEntityClass(Class clazz) {
+    protected synchronized static String getJPAConfigNameForEntityClass(Class<?> clazz) {
 
         // if there is changes to application classes we must invalidate the cache
         ApplicationClassloaderState currentState = Play.classloader.currentState;
@@ -34,8 +34,7 @@ public class Entity2JPAConfigResolver {
 
     }
 
-    private static String resolveJPAConfigNameForEntityClass(Class clazz) {
-        @SuppressWarnings("unchecked")
+    private static String resolveJPAConfigNameForEntityClass(Class<?> clazz) {
         PersistenceUnit persistenceUnitAnnotation = (PersistenceUnit)clazz.getAnnotation(PersistenceUnit.class);
         if (persistenceUnitAnnotation!=null) {
             return persistenceUnitAnnotation.name();

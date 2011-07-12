@@ -9,6 +9,10 @@ import play.vfs.VirtualFile;
  */
 public class CompilationException extends PlayException implements SourceAttachment {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String problem;
     private VirtualFile source;
     private Integer line;

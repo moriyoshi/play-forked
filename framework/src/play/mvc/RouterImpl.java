@@ -141,7 +141,7 @@ public class RouterImpl extends Router {
 
     @SuppressWarnings("unchecked")
     public Iterable<Route> getRoutes() {
-        return (Iterable<Route>)(List)routes;
+        return (Iterable<Route>)(List<?>)routes;
     }
 
     public void routeOnlyStatic(Http.Request request) {

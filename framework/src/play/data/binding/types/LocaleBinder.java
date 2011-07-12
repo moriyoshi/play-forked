@@ -10,7 +10,7 @@ import java.util.Locale;
  */
 public class LocaleBinder implements TypeBinder<Locale> {
 
-    public Locale bind(String name, Annotation[] annotations, String value, Class actualClass, Type genericType) {
+    public Locale bind(String name, Annotation[] annotations, String value, Class<?> actualClass, Type genericType) {
         if( value == null )
             return null;
         if (value.length() == 2) {

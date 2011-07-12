@@ -259,7 +259,7 @@ public abstract class FunctionalTest extends BaseTest {
     }
 
     public static void makeRequest(final Request request, final Response response) {
-        final Future invocationResult = TestEngine.functionalTestsExecutor.submit(new Invoker.Invocation() {
+        final Future<?> invocationResult = TestEngine.functionalTestsExecutor.submit(new Invoker.Invocation() {
 
             @Override
             public void execute() throws Exception {                

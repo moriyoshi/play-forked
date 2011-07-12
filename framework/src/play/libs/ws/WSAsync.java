@@ -604,6 +604,11 @@ public class WSAsync implements WSImpl {
 
     private static class WSOAuthConsumer extends AbstractOAuthConsumer {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
         public WSOAuthConsumer(String consumerKey, String consumerSecret) {
             super(consumerKey, consumerSecret);
         }

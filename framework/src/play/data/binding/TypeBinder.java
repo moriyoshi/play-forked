@@ -8,6 +8,6 @@ import java.lang.reflect.Type;
  */
 public interface TypeBinder<T> {
     
-    Object bind(String name, Annotation[] annotations, String value, Class actualClass, Type genericType) throws Exception;
+    Object bind(String name, Annotation[] annotations, String value, Class<?> actualClass, Type genericType) throws Exception;
 
 }

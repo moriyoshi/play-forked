@@ -11,6 +11,10 @@ import net.sf.oval.exception.OValException;
 
 public class IPv6AddressCheck extends AbstractAnnotationCheck<IPv6Address> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     final static String mes = "validation.ipv6";
 
     @Override

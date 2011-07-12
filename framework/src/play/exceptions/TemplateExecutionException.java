@@ -7,6 +7,11 @@ import play.templates.Template;
  */
 public class TemplateExecutionException extends TemplateException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public TemplateExecutionException(Template template, Integer lineNumber, String message, Throwable cause) {
         super(template, lineNumber, message, cause);
     }
@@ -22,6 +27,11 @@ public class TemplateExecutionException extends TemplateException {
     }
     
     public static class DoBodyException extends RuntimeException {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
         public DoBodyException(Throwable cause) {
             super(cause);
         }

@@ -146,7 +146,7 @@ public abstract class BeanWrapper {
     abstract boolean isSetter(Method method);
 
     protected Object newBeanInstance() throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        Constructor constructor = beanClass.getDeclaredConstructor();
+        Constructor<?> constructor = beanClass.getDeclaredConstructor();
         constructor.setAccessible(true);
         return constructor.newInstance();
     }

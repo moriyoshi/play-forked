@@ -77,7 +77,7 @@ public class GroovyTemplate extends BaseTemplate {
             super(Play.classloader);
         }
 
-        public Class defineTemplate(String name, byte[] byteCode) {
+        public Class<?> defineTemplate(String name, byte[] byteCode) {
             return defineClass(name, byteCode, 0, byteCode.length, Play.classloader.protectionDomain);
         }
     }
@@ -91,7 +91,7 @@ public class GroovyTemplate extends BaseTemplate {
         for (int i = 4; i < lines.length; i = i + 2) {
             String className = lines[i];
             byte[] byteCode = Codec.decodeBASE64(lines[i + 1]);
-            Class c = tClassLoader.defineTemplate(className, byteCode);
+            Class<?> c = tClassLoader.defineTemplate(className, byteCode);
             if (compiledTemplate == null) {
                 compiledTemplate = c;
             }
@@ -114,7 +114,7 @@ public class GroovyTemplate extends BaseTemplate {
                 compilationUnit.addSource(new SourceUnit(name, compiledSource, compilerConfiguration, tClassLoader, compilationUnit.getErrorCollector()));
                 Field phasesF = compilationUnit.getClass().getDeclaredField("phaseOperations");
                 phasesF.setAccessible(true);
-                LinkedList[] phases = (LinkedList[]) phasesF.get(compilationUnit);
+                LinkedList<?>[] phases = (LinkedList[]) phasesF.get(compilationUnit);
                 LinkedList<GroovyClassOperation> output = new LinkedList<GroovyClassOperation>();
                 phases[Phases.OUTPUT] = output;
                 output.add(new GroovyClassOperation() {
@@ -386,7 +386,7 @@ public class GroovyTemplate extends BaseTemplate {
             TagContext.exitTag();
         }
 
-        public Class _(String className) throws Exception {
+        public Class<?> _(String className) throws Exception {
             try {
                 return Play.classloader.loadClass(className);
             } catch (ClassNotFoundException e) {
@@ -537,7 +537,7 @@ public class GroovyTemplate extends BaseTemplate {
         }
     }
 
-    static boolean isSimpleParam(Class type) {
+    static boolean isSimpleParam(Class<?> type) {
         return Number.class.isAssignableFrom(type) || type.equals(String.class) || type.isPrimitive();
     }
 }

@@ -56,17 +56,17 @@ public class JPAPlugin extends PlayPlugin {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Object bind(String name, Class clazz, java.lang.reflect.Type type, Annotation[] annotations, Map<String, String[]> params) {
+    public Object bind(String name, Class<?> clazz, java.lang.reflect.Type type, Annotation[] annotations, Map<String, String[]> params) {
         // TODO need to be more generic in order to work with JPASupport
         if (JPABase.class.isAssignableFrom(clazz)) {
-            String keyName = Model.Manager.factoryFor(clazz).keyName();
+            String keyName = Model.Manager.factoryFor((Class<? extends Model>)clazz).keyName();
             String idKey = name + "." + keyName;
             if (params.containsKey(idKey) && params.get(idKey).length > 0 && params.get(idKey)[0] != null && params.get(idKey)[0].trim().length() > 0) {
                 String id = params.get(idKey)[0];
                 try {
                     EntityManager em = JPABase.getJPAConfig(clazz).getJPAContext().em();
                     Query query = em.createQuery("from " + clazz.getName() + " o where o." + keyName + " = ?");
-                    query.setParameter(1, play.data.binding.Binder.directBind(name, annotations, id + "", Model.Manager.factoryFor(clazz).keyType()));
+                    query.setParameter(1, play.data.binding.Binder.directBind(name, annotations, id + "", Model.Manager.factoryFor((Class<? extends Model>)clazz).keyType()));
                     Object o = query.getSingleResult();
                     return GenericModel.edit(o, name, params, annotations);
                 } catch (NoResultException e) {
@@ -89,7 +89,7 @@ public class JPAPlugin extends PlayPlugin {
     }
 
     @Override
-    public void enhance(ApplicationClass applicationClass) throws Exception {
+    public void enhance(ApplicationClass<?> applicationClass) throws Exception {
         new JPAEnhancer().enhanceThisClass(applicationClass);
     }
 
@@ -126,13 +126,13 @@ public class JPAPlugin extends PlayPlugin {
                 if (!DBConfig.defaultDbConfigName.equalsIgnoreCase(configName)) {
                    propPrefix = "db_"+configName+".";
                 }
-                List<Class> classes = findEntityClassesForThisConfig(configName, propPrefix);
+                List<Class<?>> classes = findEntityClassesForThisConfig(configName, propPrefix);
                 if (classes == null) continue;
 
                 // we're ready to configure this instance of JPA
                 final String hibernateDataSource = Play.configuration.getProperty(propPrefix+"hibernate.connection.datasource");
 
-                if (StringUtils.isEmpty(hibernateDataSource) && dbConfig == null) {
+                if (StringUtils.isEmpty(hibernateDataSource)) {
                     throw new JPAException("Cannot start a JPA manager without a properly configured database"+getConfigInfoString(configName),
                             new NullPointerException("No datasource configured"));
                 }
@@ -208,7 +208,7 @@ public class JPAPlugin extends PlayPlugin {
                     }
                 }
 
-                for (ApplicationClass applicationClass : Play.classes.all()) {
+                for (ApplicationClass<?> applicationClass : Play.classes.all()) {
                     if (applicationClass.isClass() || applicationClass.javaPackage == null) {
                         continue;
                     }
@@ -237,8 +237,8 @@ public class JPAPlugin extends PlayPlugin {
         }
 
         // must look for Entity-objects referring to none-existing JPAConfig
-        List<Class> allEntityClasses = Play.classloader.getAnnotatedClasses(Entity.class);
-        for (Class clazz : allEntityClasses) {
+        List<Class<?>> allEntityClasses = Play.classloader.getAnnotatedClasses(Entity.class);
+        for (Class<?> clazz : allEntityClasses) {
             String configName = Entity2JPAConfigResolver.getJPAConfigNameForEntityClass(clazz);
             if (JPA.getJPAConfig(configName, true)==null) {
                 throw new JPAException("Found Entity-class ("+clazz.getName()+") referring to none-existing JPAConfig" + getConfigInfoString(configName) + ". " +
@@ -247,13 +247,13 @@ public class JPAPlugin extends PlayPlugin {
         }
     }
 
-    private List<Class> findEntityClassesForThisConfig(String configName, String propPrefix) {
+    private List<Class<?>> findEntityClassesForThisConfig(String configName, String propPrefix) {
         //look and see if we have any Entity-objects for this db config
-        List<Class> classes = Play.classloader.getAnnotatedClasses(Entity.class);
+        List<Class<?>> classes = Play.classloader.getAnnotatedClasses(Entity.class);
 
         // filter list on Entities meant for us..
-        List<Class> filteredClasses = new ArrayList<Class>(classes.size());
-        for (Class clazz : classes) {
+        List<Class<?>> filteredClasses = new ArrayList<Class<?>>(classes.size());
+        for (Class<?> clazz : classes) {
             if ( configName.equals(Entity2JPAConfigResolver.getJPAConfigNameForEntityClass(clazz))) {
                 filteredClasses.add(clazz);
             }
@@ -519,7 +519,7 @@ public class JPAPlugin extends PlayPlugin {
 
         //
         Field keyField() {
-            Class c = clazz;
+            Class<?> c = clazz;
             try {
                 while (!c.equals(Object.class)) {
                     for (Field field : c.getDeclaredFields()) {
@@ -641,6 +641,11 @@ public class JPAPlugin extends PlayPlugin {
     //
     // This is really hacky. We should move to something better than Hibernate like EBEAN
     private static class PlayInterceptor extends EmptyInterceptor {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
 
         @Override
         public int[] findDirty(Object o, Serializable id, Object[] arg2, Object[] arg3, String[] arg4, Type[] arg5) {

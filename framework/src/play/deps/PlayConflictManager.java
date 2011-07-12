@@ -17,6 +17,7 @@ public class PlayConflictManager extends AbstractConflictManager {
 
     public LatestConflictManager deleguate = new LatestConflictManager(new LatestRevisionStrategy());
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Collection resolveConflicts(IvyNode in, Collection conflicts) {
 
@@ -26,7 +27,7 @@ public class PlayConflictManager extends AbstractConflictManager {
         }
 
         // Force
-        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
+        for (Iterator<IvyNode> iter = conflicts.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode) iter.next();
             DependencyDescriptor dd = node.getDependencyDescriptor(in);
             if (dd != null && dd.isForce() && in.getResolvedId().equals(dd.getParentRevisionId())) {
@@ -35,7 +36,7 @@ public class PlayConflictManager extends AbstractConflictManager {
         }
 
         boolean foundBuiltInDependency = false;
-        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
+        for (Iterator<IvyNode> iter = conflicts.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode) iter.next();
             ModuleRevisionId modRev = node.getResolvedId();
             File jar = new File(System.getProperty("play.path") + "/framework/lib/" + modRev.getName() + "-" + modRev.getRevision() + ".jar");
@@ -54,7 +55,7 @@ public class PlayConflictManager extends AbstractConflictManager {
          * Evict other versions
          */
         List<IvyNode> result = new ArrayList<IvyNode>();
-        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
+        for (Iterator<IvyNode> iter = conflicts.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode) iter.next();
             ModuleRevisionId modRev = node.getResolvedId();
             File jar = new File(System.getProperty("play.path") + "/framework/lib/" + modRev.getName() + "-" + modRev.getRevision() + ".jar");

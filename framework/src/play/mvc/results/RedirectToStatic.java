@@ -10,6 +10,10 @@ import play.mvc.Http.Response;
  */
 public class RedirectToStatic extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String file;
     
     public RedirectToStatic(String file) {

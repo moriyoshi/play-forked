@@ -10,7 +10,7 @@ import play.classloading.enhancers.Enhancer;
  */
 public class JPAEnhancer extends Enhancer {
 
-    public void enhanceThisClass(ApplicationClass applicationClass) throws Exception {
+    public void enhanceThisClass(ApplicationClass<?> applicationClass) throws Exception {
         CtClass ctClass = makeClass(applicationClass);
 
         if (!ctClass.subtypeOf(classPool.get("play.db.jpa.JPABase"))) {

@@ -146,7 +146,7 @@ public class JPAConfig {
      * @param configName the name of the db configuration
      */
     protected void invokeJPAConfigurationExtensions(Ejb3Configuration cfg, String configName) {
-        for(ApplicationClasses.ApplicationClass c : Play.classes.getAssignableClasses(JPAConfigurationExtension.class)) {
+        for(ApplicationClasses.ApplicationClass<?> c : Play.classes.getAssignableClasses(JPAConfigurationExtension.class)) {
             if(!Modifier.isAbstract(c.getClass().getModifiers())) {
                 JPAConfigurationExtension extension = null;
                 try {

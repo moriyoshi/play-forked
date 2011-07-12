@@ -41,7 +41,7 @@ public class ValidCheck extends AbstractAnnotationCheck<Required> {
             key = superKey + "." + key;
         }
         if(value instanceof Collection) {
-            Collection valueCollection = (Collection)value;
+            Collection<?> valueCollection = (Collection<?>)value;
             boolean everythingIsValid = true;
             int index = 0;
             for(Object item : valueCollection) {

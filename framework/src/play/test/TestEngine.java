@@ -24,8 +24,8 @@ import play.vfs.VirtualFile;
  */
 public class TestEngine {
 
-    private final static class ClassNameComparator implements Comparator<Class> {
-        public int compare(Class aClass, Class bClass) {
+    private final static class ClassNameComparator implements Comparator<Class<?>> {
+        public int compare(Class<?> aClass, Class<?> bClass) {
             return aClass.getName().compareTo(bClass.getName());
         }
     }
@@ -34,10 +34,10 @@ public class TestEngine {
 
     public static ExecutorService functionalTestsExecutor = Executors.newSingleThreadExecutor();
 
-    public static List<Class> allUnitTests() {
-        List<Class> classes = Play.classloader.getAssignableClasses(Assert.class);
-        for (ListIterator<Class> it = classes.listIterator(); it.hasNext();) {
-            Class c = it.next();
+    public static List<Class<? extends Assert>> allUnitTests() {
+        List<Class<? extends Assert>> classes = Play.classloader.getAssignableClasses(Assert.class);
+        for (ListIterator<Class<? extends Assert>> it = classes.listIterator(); it.hasNext();) {
+            Class<? extends Assert> c = it.next();
             if (Modifier.isAbstract(c.getModifiers())) {
                 it.remove();
             } else {
@@ -50,9 +50,9 @@ public class TestEngine {
         return classes;
     }
 
-    public static List<Class> allFunctionalTests() {
-        List<Class> classes = Play.classloader.getAssignableClasses(FunctionalTest.class);
-        for (ListIterator<Class> it = classes.listIterator(); it.hasNext();) {
+    public static List<Class<? extends FunctionalTest>> allFunctionalTests() {
+        List<Class<? extends FunctionalTest>> classes = Play.classloader.getAssignableClasses(FunctionalTest.class);
+        for (ListIterator<Class<? extends FunctionalTest>> it = classes.listIterator(); it.hasNext();) {
             if (Modifier.isAbstract(it.next().getModifiers())) {
                 it.remove();
             }
@@ -100,7 +100,7 @@ public class TestEngine {
 
         try {
             // Load test class
-            final Class testClass = Play.classloader.loadClass(name);
+            final Class<? extends BaseTest> testClass = (Class<? extends BaseTest>) Play.classloader.loadClass(name);
 
             TestResults pluginTestResults = Play.pluginCollection.runTest(testClass);
             if (pluginTestResults != null) {

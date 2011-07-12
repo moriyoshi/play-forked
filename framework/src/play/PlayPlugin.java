@@ -44,14 +44,14 @@ public abstract class PlayPlugin implements Comparable<PlayPlugin> {
     /**
      * Run a test class
      */
-    public TestResults runTest(Class<BaseTest> clazz) {
+    public TestResults runTest(Class<? extends BaseTest> clazz) {
         return null;
     }
 
     /**
      * Called when play need to bind a Java object from HTTP params
      */
-    public Object bind(String name, Class clazz, Type type, Annotation[] annotations, Map<String, String[]> params) {
+    public Object bind(String name, Class<?> clazz, Type type, Annotation[] annotations, Map<String, String[]> params) {
         return null;
     }
 
@@ -94,7 +94,7 @@ public abstract class PlayPlugin implements Comparable<PlayPlugin> {
      * @param applicationClass
      * @throws java.lang.Exception
      */
-    public void enhance(ApplicationClass applicationClass) throws Exception {
+    public void enhance(ApplicationClass<?> applicationClass) throws Exception {
     }
 
     /**
@@ -247,8 +247,8 @@ public abstract class PlayPlugin implements Comparable<PlayPlugin> {
     public void onEvent(String message, Object context) {
     }
 
-    public List<ApplicationClass> onClassesChange(List<ApplicationClass> modified) {
-        return new ArrayList<ApplicationClass>();
+    public List<ApplicationClass<?>> onClassesChange(List<ApplicationClass<?>> modifieds) {
+        return new ArrayList<ApplicationClass<?>>();
     }
 
     public List<String> addTemplateExtensions() {
@@ -269,7 +269,7 @@ public abstract class PlayPlugin implements Comparable<PlayPlugin> {
      * Must be added to the mutable list.
      */
     @Deprecated
-    public void compileAll(List<ApplicationClass> classes) {
+    public void compileAll(List<ApplicationClass<?>> classes) {
     }
 
     /**

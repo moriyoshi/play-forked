@@ -4,6 +4,7 @@ import play.Logger;
 import play.Play;
 import play.PlayPlugin;
 import play.classloading.ApplicationClasses;
+import play.classloading.ApplicationClasses.ApplicationClass;
 import play.classloading.ApplicationClassloader;
 import play.db.Model;
 import play.exceptions.UnexpectedException;
@@ -196,7 +197,7 @@ public class PluginCollection {
             if (isLoadedByApplicationClassloader(plugin)) {
                 //This plugin is application-supplied - Must reload it
                 String pluginClassName = plugin.getClass().getName();
-                Class pluginClazz = Play.classloader.loadClass( pluginClassName);
+                Class<?> pluginClazz = Play.classloader.loadClass( pluginClassName);
 
                 //first looking for constructors the old way
                 Constructor<?>[] constructors = pluginClazz.getConstructors();
@@ -502,7 +503,7 @@ public class PluginCollection {
         }
     }
 
-    public void enhance(ApplicationClasses.ApplicationClass applicationClass){
+    public void enhance(ApplicationClasses.ApplicationClass<?> applicationClass){
         for (PlayPlugin plugin : getEnabledPlugins()) {
             try {
                 long start = System.currentTimeMillis();
@@ -517,16 +518,16 @@ public class PluginCollection {
     }
 
     @Deprecated
-    public List<ApplicationClasses.ApplicationClass> onClassesChange(List<ApplicationClasses.ApplicationClass> modified){
-        List<ApplicationClasses.ApplicationClass> modifiedWithDependencies = new ArrayList<ApplicationClasses.ApplicationClass>();
+    public List<ApplicationClasses.ApplicationClass<?>> onClassesChange(List<ApplicationClass<?>> modifieds){
+        List<ApplicationClasses.ApplicationClass<?>> modifiedWithDependencies = new ArrayList<ApplicationClasses.ApplicationClass<?>>();
         for( PlayPlugin plugin : getEnabledPlugins() ){
-            modifiedWithDependencies.addAll( plugin.onClassesChange(modified) );
+            modifiedWithDependencies.addAll( plugin.onClassesChange(modifieds) );
         }
         return modifiedWithDependencies;
     }
 
     @Deprecated
-    public void compileAll(List<ApplicationClasses.ApplicationClass> classes){
+    public void compileAll(List<ApplicationClasses.ApplicationClass<?>> classes){
         for( PlayPlugin plugin : getEnabledPlugins() ){
             plugin.compileAll(classes);
         }
@@ -542,7 +543,7 @@ public class PluginCollection {
         return null;
     }
 
-    public Object bind(String name, Class clazz, Type type, Annotation[] annotations, Map<String, String[]> params){
+    public Object bind(String name, Class<?> clazz, Type type, Annotation[] annotations, Map<String, String[]> params){
         for (PlayPlugin plugin : getEnabledPlugins()) {
             Object result = plugin.bind(name, clazz, type, annotations, params);
             if (result != null) {
@@ -683,7 +684,7 @@ public class PluginCollection {
         }
     }
 
-    public TestEngine.TestResults runTest(Class<BaseTest> clazz){
+    public TestEngine.TestResults runTest(Class<? extends BaseTest> clazz){
         for (PlayPlugin plugin : getEnabledPlugins()) {
             TestEngine.TestResults pluginTestResults = plugin.runTest(clazz);
             if (pluginTestResults != null) {

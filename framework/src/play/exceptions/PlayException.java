@@ -8,6 +8,10 @@ import play.Play;
  */
 public abstract class PlayException extends RuntimeException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     static AtomicLong atomicLong = new AtomicLong(System.currentTimeMillis());
     String id;
 

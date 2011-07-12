@@ -11,6 +11,10 @@ import java.util.Arrays;
  */
 public class NoRouteFoundException extends PlayException implements SourceAttachment {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String file;
     String action;
     Map<String, Object> args;
@@ -23,7 +27,7 @@ public class NoRouteFoundException extends PlayException implements SourceAttach
         this.file = file;
     }
 
-    public NoRouteFoundException(String file, ApplicationClass applicationClass, Integer line) {
+    public NoRouteFoundException(String file, ApplicationClass<?> applicationClass, Integer line) {
         this(file);
         this.sourceFile = applicationClass.javaFile.relativePath();
         this.source = Arrays.asList(applicationClass.javaSource.split("\n"));
@@ -46,7 +50,7 @@ public class NoRouteFoundException extends PlayException implements SourceAttach
         }
     } 
     
-    public NoRouteFoundException(String action, Map<String, Object> args, ApplicationClass applicationClass, Integer line) {
+    public NoRouteFoundException(String action, Map<String, Object> args, ApplicationClass<?> applicationClass, Integer line) {
         this(action, args);
         this.sourceFile = applicationClass.javaFile.relativePath();
         this.source = Arrays.asList(applicationClass.javaSource.split("\n"));

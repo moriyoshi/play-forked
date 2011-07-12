@@ -16,6 +16,10 @@ import play.mvc.Http.Response;
  */
 public class RenderBinary extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private static final String INLINE_DISPOSITION_TYPE = "inline";
     private static final String ATTACHMENT_DISPOSITION_TYPE = "attachment";
 

@@ -141,7 +141,7 @@ public class DependenciesManager {
         List<ArtifactDownloadReport> missing = new ArrayList<ArtifactDownloadReport>();
 
         List<ArtifactDownloadReport> artifacts = new ArrayList<ArtifactDownloadReport>();
-        for (Iterator iter = report.getDependencies().iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = report.getDependencies().iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode) iter.next();
             if (node.isLoaded() && !node.isCompletelyEvicted()) {
                 ArtifactDownloadReport[] adr = report.getArtifactsReports(node.getResolvedId());

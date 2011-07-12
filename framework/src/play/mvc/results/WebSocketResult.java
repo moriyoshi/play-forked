@@ -9,6 +9,11 @@ import play.mvc.Http.Response;
  */
 public abstract class WebSocketResult extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public WebSocketResult() {
         super();
     }

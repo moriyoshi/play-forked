@@ -14,6 +14,10 @@ import com.thoughtworks.xstream.XStream;
  */
 public class RenderXml extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String xml;
 
     public RenderXml(CharSequence xml) {

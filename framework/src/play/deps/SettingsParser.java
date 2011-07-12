@@ -22,6 +22,11 @@ public class SettingsParser {
 
     static class Oops extends Exception {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
         public Oops(String message) {
             super(message);
         }
@@ -33,6 +38,7 @@ public class SettingsParser {
         this.logger = logger;
     }
 
+    @SuppressWarnings("unchecked")
     public void parse(IvySettings settings, File desc) {
         if(!desc.exists()) {
             System.out.println("~ !! " + desc.getAbsolutePath() + " does not exist");
@@ -55,24 +61,24 @@ public class SettingsParser {
                 throw new Oops("Unexpected format -> " + o);
             }
 
-            Map data = (Map) o;
+            Map<?, ?> data = (Map<?, ?>) o;
 
             parseIncludes(settings, data);
 
             if (data.containsKey("repositories")) {
                 if (data.get("repositories") instanceof List) {
 
-                    List repositories = (List) data.get("repositories");
+                    List<?> repositories = (List<?>) data.get("repositories");
                     List<Map<String, String>> modules = new ArrayList<Map<String, String>>();
                     for (Object dep: repositories) {
                         if (dep instanceof Map) {
-                            settings.addResolver(parseRepository((Map) dep, modules));
+                            settings.addResolver(parseRepository((Map<Object, Object>) dep, modules));
                         } else {
                             throw new Oops("Unknown repository format -> " + dep);
                         }
                     }
 
-                    for (Map attributes: modules) {
+                    for (Map<?, ?> attributes: modules) {
                         settings.addModuleConfiguration(attributes, settings.getMatcher(PatternMatcher.EXACT_OR_REGEXP), (String) attributes.remove("resolver"), null, null, null);
                     }
 
@@ -94,10 +100,10 @@ public class SettingsParser {
     /**
      * Look for an "include" property containing a list of yaml descriptors and load their repositories.
      */
-    private void parseIncludes(IvySettings settings, Map data) throws Oops {
+    private void parseIncludes(IvySettings settings, Map<?, ?> data) throws Oops {
         if (data.containsKey("include") && data.get("include") != null) {
             if (data.get("include") instanceof List) {
-                List<?> includes = (List)data.get("include");
+                List<?> includes = (List<?>)data.get("include");
                 if (includes != null) {
                     for (Object inc : includes) {
                         File include = new File(substitute(inc.toString()));
@@ -110,11 +116,12 @@ public class SettingsParser {
         }
     }
 
-    DependencyResolver parseRepository(Map repoDescriptor, List<Map<String, String>> modules) throws Oops {
+    @SuppressWarnings("unchecked")
+    DependencyResolver parseRepository(Map<Object, Object> repoDescriptor, List<Map<String, String>> modules) throws Oops {
 
         Object key = repoDescriptor.keySet().iterator().next();
         String repName = key.toString().trim();
-        Map options = (Map) repoDescriptor.get(key);
+        Map<Object, Object> options = (Map<Object, Object>) repoDescriptor.get(key);
 
         if (options == null) {
             throw new Oops("Parsing error in " + repName + ": check the format and the indentation.");
@@ -168,8 +175,8 @@ public class SettingsParser {
             ChainResolver chainResolver = new ChainResolver();
             chainResolver.setName(repName);
             chainResolver.setReturnFirst(true);
-            for (Object o : get(options, "using", List.class, new ArrayList())) {
-                DependencyResolver res = parseRepository((Map) o, modules);
+            for (Map<Object, Object> o : (Iterable<Map<Object, Object>>)get(options, "using", List.class, new ArrayList<Map<Object, Object>>())) {
+                DependencyResolver res = parseRepository(o, modules);
                 if(res instanceof FileSystemResolver) {
                     chainResolver.setCheckmodified(true);
                 }
@@ -182,7 +189,7 @@ public class SettingsParser {
             throw new Oops("Unknown repository type -> " + type);
         }
 
-        List contains = get(options, "contains", List.class);
+        List<Object> contains = get(options, "contains", List.class);
         if (contains != null) {
             for (Object o : contains) {
                 String v = o.toString().trim();
@@ -232,7 +239,7 @@ public class SettingsParser {
     }
 
     @SuppressWarnings("unchecked")
-    <T> T get(Map data, String key, Class<T> type) throws Oops {
+    <T> T get(Map<?, ?> data, String key, Class<T> type) throws Oops {
         if (data.containsKey(key) && data.get(key) != null) {
             Object o = data.get(key);
             if (type.isAssignableFrom(o.getClass())) {
@@ -267,7 +274,7 @@ public class SettingsParser {
         return s;
     }
 
-    <T> T get(Map data, String key, Class<T> type, T defaultValue) throws Oops {
+    <T> T get(Map<?, ?> data, String key, Class<T> type, T defaultValue) throws Oops {
         T o = get(data, key, type);
         if (o == null) {
             return defaultValue;

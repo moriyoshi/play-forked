@@ -504,6 +504,10 @@ public class Evolutions extends PlayPlugin {
     // Exceptions
     public static class InvalidDatabaseRevision extends PlayException {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
         String evolutionScript;
 
         public InvalidDatabaseRevision(String evolutionScript) {
@@ -528,6 +532,10 @@ public class Evolutions extends PlayPlugin {
 
     public static class InconsistentDatabase extends PlayException {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
         String evolutionScript;
         String error;
         int revision;

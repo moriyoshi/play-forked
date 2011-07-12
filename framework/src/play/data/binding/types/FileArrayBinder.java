@@ -17,7 +17,7 @@ import java.util.List;
 public class FileArrayBinder implements TypeBinder<File[]> {
 
     @SuppressWarnings("unchecked")
-    public File[] bind(String name, Annotation[] annotations, String value, Class actualClass, Type genericType) {
+    public File[] bind(String name, Annotation[] annotations, String value, Class<?> actualClass, Type genericType) {
         if (value == null || value.trim().length() == 0) {
             return null;
         }

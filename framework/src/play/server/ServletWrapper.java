@@ -14,7 +14,6 @@ import play.mvc.ActionInvoker;
 import play.mvc.Http;
 import play.mvc.Http.Request;
 import play.mvc.Http.Response;
-import play.mvc.RouterImpl;
 import play.mvc.Scope;
 import play.mvc.results.NotFound;
 import play.mvc.results.RenderStatic;
@@ -42,6 +41,10 @@ import java.util.*;
  */
 public class ServletWrapper extends HttpServlet implements ServletContextListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     public static final String IF_MODIFIED_SINCE = "If-Modified-Since";
     public static final String IF_NONE_MATCH = "If-None-Match";
 
@@ -304,12 +307,12 @@ public class ServletWrapper extends HttpServlet implements ServletContextListene
     protected static Map<String, Http.Header> getHeaders(HttpServletRequest httpServletRequest) {
         Map<String, Http.Header> headers = new HashMap<String, Http.Header>(16);
 
-        Enumeration headersNames = httpServletRequest.getHeaderNames();
+        Enumeration<?> headersNames = httpServletRequest.getHeaderNames();
         while (headersNames.hasMoreElements()) {
             Http.Header hd = new Http.Header();
             hd.name = (String) headersNames.nextElement();
             hd.values = new ArrayList<String>();
-            Enumeration enumValues = httpServletRequest.getHeaders(hd.name);
+            Enumeration<?> enumValues = httpServletRequest.getHeaders(hd.name);
             while (enumValues.hasMoreElements()) {
                 String value = (String) enumValues.nextElement();
                 hd.values.add(value);

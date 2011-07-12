@@ -45,14 +45,14 @@ public abstract class Enhancer {
     /**
      * Construct a javassist CtClass from an application class.
      */
-    public CtClass makeClass(ApplicationClass applicationClass) throws IOException {
+    public CtClass makeClass(ApplicationClass<?> applicationClass) throws IOException {
         return classPool.makeClass(new ByteArrayInputStream(applicationClass.enhancedByteCode));
     }
 
     /**
      * The magic happen here...
      */
-    public abstract void enhanceThisClass(ApplicationClass applicationClass) throws Exception;
+    public abstract void enhanceThisClass(ApplicationClass<?> applicationClass) throws Exception;
 
     /**
      * Dumb classpath implementation for javassist hacking
@@ -184,11 +184,11 @@ public abstract class Enhancer {
         return false;
     }
 
-    boolean isScala(ApplicationClass app) {
+    boolean isScala(ApplicationClass<?> app) {
         return app.javaFile.getName().endsWith(".scala");
     }
 
-    boolean isAnon(ApplicationClass app) {
+    boolean isAnon(ApplicationClass<?> app) {
         return app.name.contains("$anonfun$") || app.name.contains("$anon$");
     }
     

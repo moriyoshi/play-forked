@@ -74,7 +74,7 @@ public class Blob implements BinaryField, UserType {
         return new int[] {Types.VARCHAR};
     }
 
-    public Class returnedClass() {
+    public Class<Blob> returnedClass() {
         return Blob.class;
     }
 

@@ -9,6 +9,10 @@ import play.mvc.Http.Response;
  */
 public class NotModified extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String etag;
 
     public NotModified() {

@@ -14,7 +14,7 @@ import play.mvc.Mailer;
 public class MailerEnhancer extends Enhancer {
 
     @Override
-    public void enhanceThisClass(ApplicationClass applicationClass) throws Exception {
+    public void enhanceThisClass(ApplicationClass<?> applicationClass) throws Exception {
         if (isScala(applicationClass)) {
             return;
         }

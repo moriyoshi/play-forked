@@ -16,7 +16,6 @@ import play.Play;
 import play.Play.Mode;
 import play.libs.IO;
 import play.server.ssl.SslHttpServerPipelineFactory;
-import play.vfs.VirtualFile;
 
 public class Server {
 

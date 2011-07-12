@@ -14,6 +14,10 @@ import play.exceptions.UnexpectedException;
  */
 public class RenderJson extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String json;
 
     public RenderJson(Object o) {

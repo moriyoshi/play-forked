@@ -23,16 +23,15 @@ public class PlayJUnitRunner extends Runner {
     // *******************
     JUnit4 jUnit4;
 
-    public PlayJUnitRunner(Class testClass) throws ClassNotFoundException, InitializationError {
+    public PlayJUnitRunner(Class<?> testClass) throws ClassNotFoundException, InitializationError {
         synchronized (Play.class) {
             if (!Play.started) {
                 Play.init(new File("."), PlayJUnitRunner.getPlayId());
                 Play.javaPath.add(Play.getVirtualFile("test"));
                 Play.start();
                 useCustomRunner = true;
-                Class classToRun = Play.classloader.loadApplicationClass(testClass.getName());
             }
-            Class classToRun = Play.classloader.loadApplicationClass(testClass.getName());
+            Class<?> classToRun = Play.classloader.loadApplicationClass(testClass.getName());
             jUnit4 = new JUnit4(classToRun);
         }
     }

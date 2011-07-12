@@ -33,9 +33,14 @@ import play.utils.Utils;
 @SuppressWarnings("unchecked")
 public class GenericModel extends JPABase {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public static <T extends JPABase> T create(Class<?> type, String name, Map<String, String[]> params, Annotation[] annotations) {
         try {
-            Constructor c = type.getDeclaredConstructor();
+            Constructor<?> c = type.getDeclaredConstructor();
             c.setAccessible(true);
             Object model = c.newInstance();
             return (T) edit(model, name, params, annotations);
@@ -50,7 +55,7 @@ public class GenericModel extends JPABase {
             BeanWrapper bw = BeanWrapper.forClass(o.getClass());
             // Start with relations
             Set<Field> fields = new HashSet<Field>();
-            Class clazz = o.getClass();
+            Class<?> clazz = o.getClass();
             while (!clazz.equals(Object.class)) {
                 Collections.addAll(fields, clazz.getDeclaredFields());
                 clazz = clazz.getSuperclass();
@@ -65,7 +70,7 @@ public class GenericModel extends JPABase {
                     relation = field.getType().getName();
                 }
                 if (field.isAnnotationPresent(OneToMany.class) || field.isAnnotationPresent(ManyToMany.class)) {
-                    Class fieldType = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+                    Class<?> fieldType = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
                     isEntity = true;
                     relation = fieldType.getName();
                     multiple = true;
@@ -77,11 +82,11 @@ public class GenericModel extends JPABase {
                         String keyName = Model.Manager.factoryFor(c).keyName();
                         EntityManager em = JPABase.getJPAConfig(c).getJPAContext().em();
                         if (multiple && Collection.class.isAssignableFrom(field.getType())) {
-                            Collection l = new ArrayList();
+                            Collection<Object> l = new ArrayList<Object>();
                             if (SortedSet.class.isAssignableFrom(field.getType())) {
-                                l = new TreeSet();
+                                l = new TreeSet<Object>();
                             } else if (Set.class.isAssignableFrom(field.getType())) {
-                                l = new HashSet();
+                                l = new HashSet<Object>();
                             }
                             String[] ids = params.get(name + "." + field.getName() + "." + keyName);
                             if (ids != null) {
@@ -393,7 +398,7 @@ public class GenericModel extends JPABase {
     @PostLoad
     @SuppressWarnings("deprecation")
     public void _setupAttachment() {
-        Class c = this.getClass();
+        Class<?> c = this.getClass();
         while (!c.equals(Object.class)) {
             for (Field field : c.getDeclaredFields()) {
                 if (FileAttachment.class.isAssignableFrom(field.getType())) {
@@ -422,7 +427,7 @@ public class GenericModel extends JPABase {
     @PostUpdate
     @SuppressWarnings("deprecation")
     public void _saveAttachment() {
-        Class c = this.getClass();
+        Class<?> c = this.getClass();
         while (!c.equals(Object.class)) {
             for (Field field : c.getDeclaredFields()) {
                 if (field.getType().equals(FileAttachment.class)) {

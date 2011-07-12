@@ -7,6 +7,10 @@ import net.sf.oval.exception.OValException;
 
 public class IPv4AddressCheck extends AbstractAnnotationCheck<IPv4Address> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     final static String mes = "validation.ipv4";
 
     @Override

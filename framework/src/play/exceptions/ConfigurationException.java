@@ -5,6 +5,11 @@ package play.exceptions;
  */
 public class ConfigurationException extends PlayException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public ConfigurationException(String message) {
         super(message);
     }

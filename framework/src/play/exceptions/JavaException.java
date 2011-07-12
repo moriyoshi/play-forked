@@ -9,16 +9,20 @@ import play.classloading.ApplicationClasses.ApplicationClass;
  */
 public abstract class JavaException extends PlayException implements SourceAttachment {
 
-    private ApplicationClass applicationClass;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private ApplicationClass<?> applicationClass;
     private Integer lineNumber;
 
-    public JavaException(ApplicationClass applicationClass, Integer lineNumber, String message) {
+    public JavaException(ApplicationClass<?> applicationClass, Integer lineNumber, String message) {
         super(message);
         this.applicationClass = applicationClass;
         this.lineNumber = lineNumber;
     }
 
-    public JavaException(ApplicationClass applicationClass, Integer lineNumber, String message, Throwable cause) {
+    public JavaException(ApplicationClass<?> applicationClass, Integer lineNumber, String message, Throwable cause) {
         super(message, cause);
         this.applicationClass = applicationClass;
         this.lineNumber = lineNumber;

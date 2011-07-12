@@ -27,7 +27,7 @@ public class ControllersEnhancer extends Enhancer {
     public static ThreadLocal<Stack<String>> currentAction = new ThreadLocal<Stack<String>>();
 
     @Override
-    public void enhanceThisClass(final ApplicationClass applicationClass) throws Exception {
+    public void enhanceThisClass(final ApplicationClass<?> applicationClass) throws Exception {
         if (isAnon(applicationClass)) {
             return;
         }

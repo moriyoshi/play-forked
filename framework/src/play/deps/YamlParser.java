@@ -32,6 +32,11 @@ public class YamlParser extends AbstractModuleDescriptorParser {
 
     static class Oops extends Exception {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
         public Oops(String message) {
             super(message);
         }
@@ -58,7 +63,7 @@ public class YamlParser extends AbstractModuleDescriptorParser {
                 throw new Oops("Unexpected format -> " + o);
             }
 
-            Map data = (Map) o;
+            Map<?, ?> data = (Map<?, ?>) o;
             ModuleRevisionId id = null;
 
             // Search for 'self' tag
@@ -98,18 +103,18 @@ public class YamlParser extends AbstractModuleDescriptorParser {
             if (data.containsKey("require")) {
                 if (data.get("require") instanceof List) {
 
-                    List dependencies = (List) data.get("require");
+                    List<?> dependencies = (List<?>) data.get("require");
                     for (Object dep : dependencies) {
 
                         String depName;
-                        Map options;
+                        Map<?, ?> options;
 
                         if (dep instanceof String) {
                             depName = ((String) dep).trim();
-                            options = new HashMap();
+                            options = new HashMap<Object, Object>();
                         } else if (dep instanceof Map) {
-                            depName = ((Map) dep).keySet().iterator().next().toString().trim();
-                            options = (Map) ((Map) dep).values().iterator().next();
+                            depName = ((Map<?, ?>) dep).keySet().iterator().next().toString().trim();
+                            options = (Map<?, ?>) ((Map<?, ?>) dep).values().iterator().next();
                         } else {
                             throw new Oops("Unknown dependency format -> " + dep);
                         }
@@ -145,7 +150,7 @@ public class YamlParser extends AbstractModuleDescriptorParser {
 
                         // Exclude transitive dependencies
                         if (options.containsKey("exclude") && options.get("exclude") instanceof List) {
-                            List exclude = (List) options.get("exclude");
+                            List<?> exclude = (List<?>) options.get("exclude");
                             for (Object ex : exclude) {
                                 String exName = ex.toString().trim();
                                 m = Pattern.compile("([^\\s]+)\\s*[-][>]\\s*([^\\s]+).*").matcher(exName);
@@ -163,7 +168,7 @@ public class YamlParser extends AbstractModuleDescriptorParser {
 
                                 ArtifactId aid = new ArtifactId(new ModuleId(org, module), "*", "*", "*");
                                 PatternMatcher matcher = new ExactOrRegexpPatternMatcher();
-                                ExcludeRule excludeRule = new DefaultExcludeRule(aid, matcher, new HashMap());
+                                ExcludeRule excludeRule = new DefaultExcludeRule(aid, matcher, new HashMap<Object, Object>());
                                 depDescriptor.addExcludeRule("default", excludeRule);
                             }
                         }
@@ -178,7 +183,7 @@ public class YamlParser extends AbstractModuleDescriptorParser {
                             if (options.get("id") instanceof String) {
                                 useIt = options.get("id").toString().equals(currentId);
                             } else if (options.get("id") instanceof List) {
-                                useIt = ((List) options.get("id")).contains(currentId);
+                                useIt = ((List<?>) options.get("id")).contains(currentId);
                             }
                         }
 
@@ -210,7 +215,7 @@ public class YamlParser extends AbstractModuleDescriptorParser {
     }
 
     @SuppressWarnings("unchecked")
-    <T> T get(Map data, String key, Class<T> type) {
+    <T> T get(Map<?, ?> data, String key, Class<T> type) {
         if (data.containsKey(key)) {
             Object o = data.get(key);
             if (type.isAssignableFrom(o.getClass())) {
@@ -224,7 +229,7 @@ public class YamlParser extends AbstractModuleDescriptorParser {
         return null;
     }
 
-    <T> T get(Map data, String key, Class<T> type, T defaultValue) {
+    <T> T get(Map<?, ?> data, String key, Class<T> type, T defaultValue) {
         T o = get(data, key, type);
         if (o == null) {
             return defaultValue;

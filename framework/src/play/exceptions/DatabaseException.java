@@ -11,6 +11,10 @@ import play.classloading.ApplicationClasses.ApplicationClass;
  */
 public class DatabaseException extends PlayException implements SourceAttachment {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String sourceFile;
     List<String> source;
     Integer line;    
@@ -23,7 +27,7 @@ public class DatabaseException extends PlayException implements SourceAttachment
         super(message, cause);
         StackTraceElement element = getInterestingStrackTraceElement(cause);
         if(element != null) {
-            ApplicationClass applicationClass = Play.classes.getApplicationClass(element.getClassName());
+            ApplicationClass<?> applicationClass = Play.classes.getApplicationClass(element.getClassName());
             sourceFile = applicationClass.javaFile.relativePath();
             source = Arrays.asList(applicationClass.javaSource.split("\n"));
             line = element.getLineNumber();

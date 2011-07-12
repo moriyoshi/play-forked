@@ -24,13 +24,13 @@ public class ApplicationClasses {
     /**
      * Cache of all compiled classes
      */
-    Map<String, ApplicationClass> classes = new HashMap<String, ApplicationClass>();
+    Map<String, ApplicationClass<?>> classes = new HashMap<String, ApplicationClass<?>>();
 
     /**
      * Clear the classes cache
      */
     public void clear() {
-        classes = new HashMap<String, ApplicationClass>();
+        classes = new HashMap<String, ApplicationClass<?>>();
     }
 
     /**
@@ -38,9 +38,9 @@ public class ApplicationClasses {
      * @param name The fully qualified class name
      * @return The ApplicationClass or null
      */
-    public ApplicationClass getApplicationClass(String name) {
+    public ApplicationClass<?> getApplicationClass(String name) {
         if (!classes.containsKey(name) && getJava(name) != null) {
-            classes.put(name, new ApplicationClass(name));
+            classes.put(name, new ApplicationClass<Object>(name));
         }
         return classes.get(name);
     }
@@ -50,10 +50,11 @@ public class ApplicationClasses {
      * @param clazz The superclass, or the interface.
      * @return A list of application classes.
      */
-    public List<ApplicationClass> getAssignableClasses(Class<?> clazz) {
-        List<ApplicationClass> results = new ArrayList<ApplicationClass>();
+    @SuppressWarnings("unchecked")
+    public <T> List<ApplicationClass<? extends T>> getAssignableClasses(Class<T> clazz) {
+        List<ApplicationClass<? extends T>> results = new ArrayList<ApplicationClass<? extends T>>();
         if (clazz != null) {
-            for (ApplicationClass applicationClass : new ArrayList<ApplicationClass>(classes.values())) {
+            for (ApplicationClass<?> applicationClass : new ArrayList<ApplicationClass<?>>(classes.values())) {
                 if (!applicationClass.isClass()) {
                     continue;
                 }
@@ -64,7 +65,7 @@ public class ApplicationClasses {
                 }
                 try {
                     if (clazz.isAssignableFrom(applicationClass.javaClass) && !applicationClass.javaClass.getName().equals(clazz.getName())) {
-                        results.add(applicationClass);
+                        results.add((ApplicationClass<? extends T>)applicationClass);
                     }
                 } catch (Exception e) {
                 }
@@ -78,9 +79,10 @@ public class ApplicationClasses {
      * @param clazz The annotation class.
      * @return A list of application classes.
      */
-    public List<ApplicationClass> getAnnotatedClasses(Class<? extends Annotation> clazz) {
-        List<ApplicationClass> results = new ArrayList<ApplicationClass>();
-        for (ApplicationClass applicationClass : classes.values()) {
+    @SuppressWarnings("unchecked")
+    public <T> List<ApplicationClass<? extends T>> getAnnotatedClasses(Class<? extends Annotation> clazz) {
+        List<ApplicationClass<? extends T>> results = new ArrayList<ApplicationClass<? extends T>>();
+        for (ApplicationClass<?> applicationClass : classes.values()) {
             if (!applicationClass.isClass()) {
                 continue;
             }
@@ -90,7 +92,7 @@ public class ApplicationClasses {
                 throw new UnexpectedException(ex);
             }
             if (applicationClass.javaClass != null && applicationClass.javaClass.isAnnotationPresent(clazz)) {
-                results.add(applicationClass);
+                results.add((ApplicationClass<? extends T>)applicationClass);
             }
         }
         return results;
@@ -100,21 +102,21 @@ public class ApplicationClasses {
      * All loaded classes.
      * @return All loaded classes
      */
-    public List<ApplicationClass> all() {
-        return new ArrayList<ApplicationClass>(classes.values());
+    public List<ApplicationClass<?>> all() {
+        return new ArrayList<ApplicationClass<?>>(classes.values());
     }
 
     /**
      * Put a new class to the cache.
      */
-    public void add(ApplicationClass applicationClass) {
+    public void add(ApplicationClass<?> applicationClass) {
         classes.put(applicationClass.name, applicationClass);
     }
 
     /**
      * Remove a class from cache
      */
-    public void remove(ApplicationClass applicationClass) {
+    public void remove(ApplicationClass<?> applicationClass) {
         classes.remove(applicationClass.name);
     }
 
@@ -133,7 +135,7 @@ public class ApplicationClasses {
     /**
      * Represent a application class
      */
-    public static class ApplicationClass {
+    public static class ApplicationClass<T> {
 
         /**
          * The fully qualified class name
@@ -158,7 +160,7 @@ public class ApplicationClasses {
         /**
          * The in JVM loaded class
          */
-        public Class<?> javaClass;
+        public Class<T> javaClass;
         /**
          * The in JVM loaded package
          */

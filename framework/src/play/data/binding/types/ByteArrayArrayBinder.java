@@ -16,7 +16,7 @@ import java.util.List;
 public class ByteArrayArrayBinder implements TypeBinder<byte[][]> {
 
     @SuppressWarnings("unchecked")
-    public byte[][] bind(String name, Annotation[] annotations, String value, Class actualClass, Type genericType) {
+    public byte[][] bind(String name, Annotation[] annotations, String value, Class<?> actualClass, Type genericType) {
         if (value == null || value.trim().length() == 0) {
             return null;
         }

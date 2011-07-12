@@ -10,6 +10,11 @@ import play.mvc.Http.Response;
  */
 public class Ok extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public Ok() {
         super("OK");
     }

@@ -7,6 +7,11 @@ package play.utils;
  */
 public class FastRuntimeException extends RuntimeException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public FastRuntimeException(){
         super();
     }

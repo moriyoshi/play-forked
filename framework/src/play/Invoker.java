@@ -328,6 +328,11 @@ public class Invoker {
     public static class Suspend extends PlayException {
 
         /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
+        /**
          * Suspend for a timeout (in milliseconds).
          */
         long timeout;

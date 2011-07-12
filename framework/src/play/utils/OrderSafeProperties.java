@@ -16,6 +16,10 @@ import java.util.*;
  */
 public class OrderSafeProperties extends java.util.Properties {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     // set used to preserve key order
     private final LinkedHashSet<Object> keys = new LinkedHashSet<Object>();
 

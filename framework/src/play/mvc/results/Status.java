@@ -5,6 +5,10 @@ import play.mvc.Http.Response;
 
 public class Status extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     int code;
 
     public Status(int code) {

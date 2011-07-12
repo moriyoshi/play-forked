@@ -16,7 +16,6 @@ import org.w3c.dom.Document;
 import play.Invoker.Suspend;
 import play.Logger;
 import play.Play;
-import play.classloading.ApplicationClasses;
 import play.classloading.enhancers.ContinuationEnhancer;
 import play.classloading.enhancers.ControllersEnhancer.ControllerInstrumentation;
 import play.classloading.enhancers.ControllersEnhancer.ControllerSupport;
@@ -56,8 +55,6 @@ import java.lang.reflect.Type;
 import org.apache.commons.javaflow.Continuation;
 import org.apache.commons.javaflow.bytecode.StackRecorder;
 import play.libs.F;
-
-import javax.management.RuntimeErrorException;
 
 /**
  * Application controller support: The controller receives input and initiates a response by making calls on model objects.
@@ -908,6 +905,7 @@ public class Controller implements ControllerSupport {
      *
      * @param isRestoring true if restoring, false if storing, and null if you don't know
      */
+    @SuppressWarnings("unchecked")
     private static void storeOrRestoreDataStateForContinuations(Boolean isRestoring) {
 
         if (isRestoring==null) {

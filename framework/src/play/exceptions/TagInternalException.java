@@ -5,6 +5,11 @@ package play.exceptions;
  */
 public class TagInternalException extends RuntimeException {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public TagInternalException(String message) {
         super(message);
     }

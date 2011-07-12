@@ -9,6 +9,11 @@ import play.mvc.Http.Response;
  */
 public class BadRequest extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     @Override
     public void apply(Request request, Response response) {
         response.status = Http.StatusCode.BAD_REQUEST;

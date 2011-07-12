@@ -10,6 +10,10 @@ import play.templates.Template;
  */
 public class TemplateNotFoundException extends PlayException implements SourceAttachment {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String path;
     private String sourceFile;
     private List<String> source;
@@ -20,7 +24,7 @@ public class TemplateNotFoundException extends PlayException implements SourceAt
         this.path = path;
     }
     
-    public TemplateNotFoundException(String path, ApplicationClass applicationClass, Integer line) {
+    public TemplateNotFoundException(String path, ApplicationClass<?> applicationClass, Integer line) {
         this(path);
         this.sourceFile = applicationClass.javaFile.relativePath();
         this.source = Arrays.asList(applicationClass.javaSource.split("\n"));

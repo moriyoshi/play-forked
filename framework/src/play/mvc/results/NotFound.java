@@ -17,6 +17,11 @@ import play.templates.TemplateLoader;
 public class NotFound extends Result {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * @param why a description of the problem
      */
     public NotFound(String why) {

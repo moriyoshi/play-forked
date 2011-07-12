@@ -4,11 +4,9 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -32,6 +30,10 @@ import play.exceptions.UnexpectedException;
 @MappedSuperclass
 public class JPABase implements Serializable, play.db.Model {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private transient JPAConfig _jpaConfig = null;
 
     public JPAContext getJPAContext() {
@@ -44,7 +46,7 @@ public class JPABase implements Serializable, play.db.Model {
     /**
      * Returns the correct JPAConfig used to manage this entity-class
      */
-    public static JPAConfig getJPAConfig(Class clazz) {
+    public static JPAConfig getJPAConfig(Class<?> clazz) {
         return JPA.getJPAConfig( Entity2JPAConfigResolver.getJPAConfigNameForEntityClass(clazz));
     }
 
@@ -129,7 +131,7 @@ public class JPABase implements Serializable, play.db.Model {
         // Cascade save
         try {
             Set<Field> fields = new HashSet<Field>();
-            Class clazz = this.getClass();
+            Class<?> clazz = this.getClass();
             while (!clazz.equals(JPABase.class)) {
                 Collections.addAll(fields, clazz.getDeclaredFields());
                 clazz = clazz.getSuperclass();
@@ -159,7 +161,7 @@ public class JPABase implements Serializable, play.db.Model {
                     }
                     if (value instanceof PersistentMap) {
                         if (((PersistentMap) value).wasInitialized()) {
-                            for (Object o : ((Map) value).values()) {
+                            for (Object o : ((Map<?, ?>) value).values()) {
                                 if (o instanceof JPABase) {
                                     ((JPABase) o).saveAndCascade(willBeSaved);
                                 }
@@ -169,7 +171,7 @@ public class JPABase implements Serializable, play.db.Model {
                     }
                     if (value instanceof PersistentCollection) {
                         if (((PersistentCollection) value).wasInitialized()) {
-                            for (Object o : (Collection) value) {
+                            for (Object o : (Collection<?>) value) {
                                 if (o instanceof JPABase) {
                                     ((JPABase) o).saveAndCascade(willBeSaved);
                                 }
@@ -251,6 +253,11 @@ public class JPABase implements Serializable, play.db.Model {
     }
 
     public static class JPAQueryException extends RuntimeException {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
 
         public JPAQueryException(String message) {
             super(message);

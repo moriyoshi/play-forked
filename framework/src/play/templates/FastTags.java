@@ -180,6 +180,8 @@ public class FastTags {
                 url += separator + "x-http-method-override=" + realMethod;
                 method = "POST";
             }
+        }
+        if (!method.equals("GET")) {
             String id = Codec.UUID();
             out.print("<form method=\"POST\" id=\"" + id + "\" " +(args.containsKey("target") ? "target=\"" + args.get("target") + "\"" : "")+ " style=\"display:none\" action=\"" + url + "\">");
             _authenticityToken(args, body, out, template, fromLine);
@@ -248,7 +250,7 @@ public class FastTags {
             } else if (test instanceof Number) {
                 return ((Number) test).intValue() != 0;
             } else if (test instanceof Collection) {
-                return !((Collection) test).isEmpty();
+                return !((Collection<?>) test).isEmpty();
             } else {
                 return true;
             }

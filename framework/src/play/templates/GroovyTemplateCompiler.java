@@ -31,8 +31,8 @@ public class GroovyTemplateCompiler extends TemplateCompiler {
         try {
             extensionsClassnames.clear();
             extensionsClassnames.addAll( Play.pluginCollection.addTemplateExtensions());
-            List<Class> extensionsClasses = Play.classloader.getAssignableClasses(JavaExtensions.class);
-            for (Class extensionsClass : extensionsClasses) {
+            List<Class<? extends JavaExtensions>> extensionsClasses = Play.classloader.getAssignableClasses(JavaExtensions.class);
+            for (Class<? extends JavaExtensions> extensionsClass : extensionsClasses) {
                 extensionsClassnames.add(extensionsClass.getName());
             }
         } catch (Throwable e) {
@@ -51,7 +51,7 @@ public class GroovyTemplateCompiler extends TemplateCompiler {
         // Static access
         List<String> names = new ArrayList<String>();
         Map<String, String> originalNames = new HashMap<String, String>();
-        for (Class clazz : Play.classloader.getAllClasses()) {
+        for (Class<?> clazz : Play.classloader.getAllClasses()) {
             if (clazz.getName().endsWith("$")) {
                 String name = clazz.getName().substring(0, clazz.getName().length() - 1).replace('$', '.') + '$';
                 names.add(name);
@@ -337,7 +337,7 @@ public class GroovyTemplateCompiler extends TemplateCompiler {
                 print("play.templates.TagContext.exitTag();");
             } catch (Exception e) {
                 // Use fastTag if exists
-                List<Class> fastClasses = new ArrayList<Class>();
+                List<Class<? extends FastTags>> fastClasses = new ArrayList<Class<? extends FastTags>>();
                 try {
                     fastClasses = Play.classloader.getAssignableClasses(FastTags.class);
                 } catch (Exception xe) {

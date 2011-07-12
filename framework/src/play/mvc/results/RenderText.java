@@ -10,6 +10,10 @@ import play.mvc.Http.Response;
  */
 public class RenderText extends Result {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     String text;
     
     public RenderText(CharSequence text) {

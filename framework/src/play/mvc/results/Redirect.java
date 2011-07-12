@@ -10,6 +10,10 @@ import play.mvc.Http.Response;
  */
 public class Redirect extends Result {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     public String url;
     public int code = Http.StatusCode.FOUND;
 

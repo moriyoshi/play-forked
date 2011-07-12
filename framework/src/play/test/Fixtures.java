@@ -19,7 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +35,6 @@ import play.data.binding.Binder;
 import play.data.binding.types.DateBinder;
 import play.db.DB;
 import play.db.DBConfig;
-import play.db.DBPlugin;
 import play.db.Model;
 import play.exceptions.DatabaseException;
 import play.exceptions.UnexpectedException;
@@ -111,7 +109,7 @@ public class Fixtures {
     @SuppressWarnings("unchecked")
     public static void deleteAllModels() {
         List<Class<? extends Model>> classes = new ArrayList<Class<? extends Model>>();
-        for (ApplicationClasses.ApplicationClass c : Play.classes.getAssignableClasses(Model.class)) {
+        for (ApplicationClasses.ApplicationClass<?> c : Play.classes.getAssignableClasses(Model.class)) {
             classes.add((Class<? extends Model>)c.javaClass);
         }
         Fixtures.delete(classes);

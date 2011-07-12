@@ -16,7 +16,7 @@ import java.util.List;
 public class UploadBinder implements TypeBinder<Model.BinaryField> {
 
     @SuppressWarnings("unchecked")
-    public Object bind(String name, Annotation[] annotations, String value, Class actualClass, Type genericType) {
+    public Object bind(String name, Annotation[] annotations, String value, Class<?> actualClass, Type genericType) {
         if (value == null || value.trim().length() == 0) {
             return null;
         }

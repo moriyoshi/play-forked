@@ -56,8 +56,8 @@ public class Binder {
     public final static Object MISSING = new Object();
     public final static Object NO_BINDING = new Object();
 
-    @SuppressWarnings("unchecked")
-    static Object bindInternal(String name, Class clazz, Type type, Annotation[] annotations, Map<String, String[]> params, String suffix, String[] profiles) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    static Object bindInternal(String name, Class<?> clazz, Type type, Annotation[] annotations, Map<String, String[]> params, String suffix, String[] profiles) {
         try {
             if (Logger.isTraceEnabled()) {
                 Logger.trace("bindInternal: name [" + name + "] suffix [" + suffix + "]");
@@ -119,15 +119,15 @@ public class Binder {
                 } else if (StringUtils.isEmpty(value[0])) {
                     return null;
                 }
-                return Enum.valueOf(clazz, value[0]);
+                return Enum.valueOf((Class)clazz, value[0]);
             }
             // Map
             if (Map.class.isAssignableFrom(clazz)) {
-                Class keyClass = String.class;
-                Class valueClass = String.class;
+                Class<?> keyClass = String.class;
+                Class<?> valueClass = String.class;
                 if (type instanceof ParameterizedType) {
-                    keyClass = (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
-                    valueClass = (Class) ((ParameterizedType) type).getActualTypeArguments()[1];
+                    keyClass = (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
+                    valueClass = (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[1];
                 }
 
                 // Special case Map<String, String>
@@ -182,10 +182,10 @@ public class Binder {
                         clazz = ArrayList.class;
                     }
                 }
-                Collection r = (Collection) clazz.newInstance();
-                Class componentClass = String.class;
+                Collection<?> r = (Collection<?>) clazz.newInstance();
+                Class<?> componentClass = String.class;
                 if (type instanceof ParameterizedType) {
-                    componentClass = (Class) ((ParameterizedType) type).getActualTypeArguments()[0];
+                    componentClass = (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
                 }
                 // Create a an array of the component class
                 if (value != null) {
@@ -194,11 +194,11 @@ public class Binder {
                     for (Class<?> c : supportedTypes.keySet()) {
                         if (c.isAssignableFrom(customArray.getClass())) {
                             Object[] ar = (Object[]) supportedTypes.get(c).bind("value", annotations, name, customArray.getClass(), null);
-                            List l = Arrays.asList(ar);
+                            List<Object> l = Arrays.asList(ar);
                             if (clazz.equals(HashSet.class)) {
-                                return new HashSet(l);
+                                return new HashSet<Object>(l);
                             } else if (clazz.equals(TreeSet.class)) {
-                                return new TreeSet(l);
+                                return new TreeSet<Object>(l);
                             }
                             return l;
 
@@ -219,13 +219,13 @@ public class Binder {
                                 if (isComposite(name + suffix + "[" + key + "]", params)) {
                                     BeanWrapper beanWrapper = getBeanWrapper(componentClass);
                                     Object oValue = beanWrapper.bind("", type, params, name + suffix + "[" + key + "]", annotations);
-                                    ((List) r).set(key, oValue);
+                                    ((List<Object>) r).set(key, oValue);
                                 } else {
                                     Map<String, String[]> tP = new HashMap<String, String[]>();
                                     tP.put("value", params.get(name + suffix + "[" + key + "]"));
                                     Object oValue = bindInternal("value", componentClass, componentClass, annotations, tP, "", value);
                                     if (oValue != MISSING) {
-                                        ((List) r).set(key, oValue);
+                                        ((List<Object>) r).set(key, oValue);
                                     }
                                 }
                             }
@@ -238,7 +238,7 @@ public class Binder {
                 }
                 for (String v : value) {
                     try {
-                        r.add(directBind(name, annotations, v, componentClass));
+                        ((List<Object>) r).add(directBind(name, annotations, v, componentClass));
                     } catch (Exception e) {
                         // ?? One item was bad
                         Logger.debug(e, "error:");
@@ -389,7 +389,7 @@ public class Binder {
         return directBind(name, annotations, value, clazz, null);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Object directBind(String name, Annotation[] annotations, String value, Class<?> clazz, Type type) throws Exception {
         if (Logger.isTraceEnabled()) {
             Logger.trace("directBind: value [" + value + "] annotation [" + Utils.join(annotations, " ") + "] Class [" + clazz + "]");
@@ -411,9 +411,9 @@ public class Binder {
         }
 
         // application custom types have higher priority
-        for (Class<TypeBinder<?>> c : Play.classloader.getAssignableClasses(TypeBinder.class)) {
+        for (Class<? extends TypeBinder<?>> c : Play.classloader.getAssignableClasses((Class<TypeBinder<?>>)(Class<?>)TypeBinder.class)) {
             if (c.isAnnotationPresent(Global.class)) {
-                Class<?> forType = (Class) ((ParameterizedType) c.getGenericInterfaces()[0]).getActualTypeArguments()[0];
+                Class<?> forType = (Class<?>) ((ParameterizedType) c.getGenericInterfaces()[0]).getActualTypeArguments()[0];
                 if (forType.isAssignableFrom(clazz)) {
                     return c.newInstance().bind(name, annotations, value, clazz, type);
                 }

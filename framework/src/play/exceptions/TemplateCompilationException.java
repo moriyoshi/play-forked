@@ -7,6 +7,11 @@ import play.templates.Template;
  */
 public class TemplateCompilationException extends TemplateException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public TemplateCompilationException(Template template, Integer lineNumber, String message) {
         super(template, lineNumber, message);
     }
