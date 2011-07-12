@@ -17,6 +17,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceException;
+import javax.persistence.Transient;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.collection.PersistentMap;
 import org.hibernate.exception.GenericJDBCException;
@@ -36,6 +37,7 @@ public class JPABase implements Serializable, play.db.Model {
     private static final long serialVersionUID = 1L;
     private transient JPAConfig _jpaConfig = null;
 
+    @Transient
     public JPAContext getJPAContext() {
         if (_jpaConfig==null) {
             _jpaConfig = getJPAConfig(getClass());
@@ -213,6 +215,7 @@ public class JPABase implements Serializable, play.db.Model {
         return getJPAContext().em();
     }
 
+    @Transient
     public boolean isPersistent() {
         return em().contains(this);
     }
@@ -288,6 +291,7 @@ public class JPABase implements Serializable, play.db.Model {
     //
 
     @Deprecated
+    @Transient
     public Object getEntityId() {
         return _key();
     }
