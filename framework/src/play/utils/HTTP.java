@@ -28,7 +28,7 @@ public class HTTP {
         final String[] parts = value.split(";");
         final Map<String, String> params = new HashMap<String, String>();
         final String _value = parts[0].trim().toLowerCase();
-        for (int i = 1; i < parts.length - 1; i++) {
+        for (int i = 1; i < parts.length; i++) {
             final String[] paramParts = parts[i].split("\\s*=\\s*", 2);
             if (paramParts.length == 2) {
                 params.put(paramParts[0].trim(), paramParts[1].trim());
