@@ -105,23 +105,38 @@ public class MimeTypes {
             mimetypes = new Properties();
             mimetypes.load(is);
         } catch (Exception ex) {
-            Logger.warn(ex.getMessage());
+            Logger.warn("Failed to load MIME-type table", ex);
+        }
+        try {
+            {
+                Properties props = new Properties();
+                props.load(MimeTypes.class.getClassLoader().getResourceAsStream("play/libs/canonical-mime-types.properties"));
+                canonicalizationMap = props;
+            }
+            {
+                Properties props = new Properties();
+                props.load(MimeTypes.class.getClassLoader().getResourceAsStream("play/libs/mime-types-rev.properties"));
+                reverseMap = props;
+            }
+        } catch (Exception ex) {
+            Logger.warn("Failed to load reverse MIME-type table", ex);
         }
         // Load mimetypes from plugins
         for (PlayPlugin plugin: Play.pluginCollection.getEnabledPlugins()) {
             Map<String, String> pluginTypes = plugin.addMimeTypes();
-            for (String type: pluginTypes.keySet()) {
-                mimetypes.setProperty(type, pluginTypes.get(type));
+            for (Map.Entry<String, String> entry: pluginTypes.entrySet()) {
+                mimetypes.setProperty(entry.getKey(), entry.getValue());
+                reverseMap.setProperty(entry.getValue(), entry.getKey());
             }
         }
         // Load custom mimetypes from the application configuration
-        Enumeration<Object> confenum = Play.configuration.keys();
-        while (confenum.hasMoreElements()) {
-            String key = (String)confenum.nextElement();
+        for (Map.Entry<Object, Object> entry: Play.configuration.entrySet()) {
+            final String key = (String)entry.getKey();
             if (key.startsWith("mimetype.")) {
-                String type = key.substring(key.indexOf('.') + 1).toLowerCase();
-                String value = (String)Play.configuration.get(key);
+                final String type = key.substring(key.indexOf('.') + 1).toLowerCase();
+                final String value = (String)entry.getValue();
                 mimetypes.setProperty(type, value);
+                reverseMap.setProperty(value, type);
             }
         }
     }
@@ -136,4 +151,19 @@ public class MimeTypes {
     public static boolean isTextualMimeType(String mimeType) {
         return mimeType.startsWith("text/");
     }
+
+    public static String canonicalizeMimeType(String mimeType) {
+        String retval = (String)canonicalizationMap.get(mimeType);
+        if (retval == null)
+            return mimeType;
+        return retval;
+    }
+
+    public static String getExtension(String mimeType) {
+        return (String)reverseMap.get(mimeType);
+    }
+
+    private static Properties reverseMap;
+
+    private static Properties canonicalizationMap;
 }
