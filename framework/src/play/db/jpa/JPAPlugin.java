@@ -134,14 +134,6 @@ public class JPAPlugin extends PlayPlugin {
                 List<Class<?>> classes = findEntityClassesForThisConfig(configName, propPrefix);
                 if (classes == null) continue;
 
-                // we're ready to configure this instance of JPA
-                final String hibernateDataSource = Play.configuration.getProperty(propPrefix+"hibernate.connection.datasource");
-
-                if (StringUtils.isEmpty(hibernateDataSource)) {
-                    throw new JPAException("Cannot start a JPA manager without a properly configured database"+getConfigInfoString(configName),
-                            new NullPointerException("No datasource configured"));
-                }
-
                 Ejb3Configuration cfg = new Ejb3Configuration();
 
                 if (dbConfig.getDatasource() != null) {
