@@ -175,7 +175,6 @@ public interface Model {
 
         @Override
         public String getName() {
-            Method readMethod = accessor.getReadMethod(), writeMethod = accessor.getWriteMethod();
             return accessor.getName();
         }
 

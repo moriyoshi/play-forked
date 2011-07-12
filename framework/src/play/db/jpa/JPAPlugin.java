@@ -24,8 +24,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
@@ -613,7 +611,7 @@ public class JPAPlugin extends PlayPlugin {
         }
 
         PropertyDescriptor keyMethod() {
-            Class c = clazz;
+            Class<?> c = clazz;
             try {
                 BeanInfo bi = Introspector.getBeanInfo(c);
                 for (PropertyDescriptor pd: bi.getPropertyDescriptors()) {
