@@ -786,7 +786,7 @@ public class Http {
 
         public void print(Object o) {
             try {
-                out.write(o.toString().getBytes(Response.current().encoding));
+                out.write(o.toString().getBytes(encoding));
             } catch (IOException ex) {
                 throw new UnexpectedException("Encoding problem ?", ex);
             }
