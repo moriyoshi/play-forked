@@ -149,7 +149,10 @@ public class MimeTypes {
     }
 
     public static boolean isTextualMimeType(String mimeType) {
-        return mimeType.startsWith("text/");
+        // TODO: avoid hard-coding
+        return mimeType.startsWith("text/") ||
+                mimeType.equals("application/xhtml+xml") ||
+                mimeType.equals("application/json");
     }
 
     public static String canonicalizeMimeType(String mimeType) {
