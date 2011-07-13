@@ -645,8 +645,7 @@ public class Play {
     public static void loadRoutes() {
         final RouterImpl router = new RouterImpl(routes, ctxPath);
         routeLastLoading = System.currentTimeMillis();
-        Play.router = router; 
-        pluginCollection.onRoutesLoaded(router);
+        Play.router = pluginCollection.onRoutesLoaded(router);
     }
 
     public static void refreshRoutes() {

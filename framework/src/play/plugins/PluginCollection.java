@@ -623,10 +623,11 @@ public class PluginCollection {
         }
     }
 
-    public void onRoutesLoaded(Router router) {
+    public Router onRoutesLoaded(Router router) {
         for (PlayPlugin plugin : getEnabledPlugins()) {
-            plugin.onRoutesLoaded(router);
+            router = plugin.onRoutesLoaded(router);
         }
+        return router;
     }
 
     public boolean rawInvocation(Http.Request request, Http.Response response)throws Exception{

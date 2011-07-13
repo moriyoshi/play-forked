@@ -236,7 +236,8 @@ public abstract class PlayPlugin implements Comparable<PlayPlugin> {
     /**
      * Called after routes loading.
      */
-    public void onRoutesLoaded(Router route) {
+    public Router onRoutesLoaded(Router router) {
+        return router;
     }
 
     /** 
