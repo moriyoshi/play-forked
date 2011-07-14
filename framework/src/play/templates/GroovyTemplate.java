@@ -477,6 +477,15 @@ public class GroovyTemplate extends BaseTemplate {
                 this.absolute = absolute;
             }
 
+            public URI secure() {
+               return actionDef.secure();
+            }
+
+            @Override
+            public String toString() {
+               return actionDef.toString();
+            }
+
             AbstractActionDefinition actionDef;
             boolean absolute;
         }

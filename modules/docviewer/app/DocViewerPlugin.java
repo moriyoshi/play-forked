@@ -37,7 +37,7 @@ public class DocViewerPlugin extends PlayPlugin {
     }
 
     @Override
-    public void onRoutesLoaded(Router router) {
+    public Router onRoutesLoaded(Router router) {
         router.prependRoute("GET", "/@documentation/?", "PlayDocumentation.index");
         router.prependRoute("GET", "/@documentation/{id}", "PlayDocumentation.page");
         router.prependRoute("GET", "/@documentation/images/{name}", "PlayDocumentation.image");
@@ -46,6 +46,7 @@ public class DocViewerPlugin extends PlayPlugin {
         router.prependRoute("GET", "/@documentation/modules/{module}/images/{name}", "PlayDocumentation.image");
         router.prependRoute("GET", "/@documentation/modules/{module}/files/{name}", "PlayDocumentation.file");
         router.prependRoute("GET", "/@documentation/cheatsheet/{category}", "PlayDocumentation.cheatSheet");
+        return router;
     }
 
 }
