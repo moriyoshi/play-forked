@@ -538,6 +538,15 @@ public class RouterImpl extends Router {
             return contains;
         }
 
+        /**
+         * Check if the parts of a HTTP request equal this Route.
+         *
+         * @param method GET/POST/etc.
+         * @param path   Part after domain and before query-string. Starts with a "/".
+         * @param accept Format, e.g. html.
+         * @param host   AKA the domain.
+         * @return ???
+         */
         public Map<String, String> matches(String method, String path, String accept, String host) {
             // Normalize
             if (path.equals(Play.ctxPath)) {
@@ -600,6 +609,14 @@ public class RouterImpl extends Router {
                 }
             }
             return null;
+        }
+
+        public Map<String, String> matches(String method, String path) {
+            return matches(method, path, null, null);
+        }
+
+        public Map<String, String> matches(String method, String path, String accept) {
+            return matches(method, path, accept, null);
         }
 
         @Override

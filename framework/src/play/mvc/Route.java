@@ -44,23 +44,4 @@ public abstract class Route {
     public abstract Arg getHostArg();
 
     public abstract String getRoutesFile();
-
-    /**
-     * Check if the parts of a HTTP request equal this Route.
-     *
-     * @param method GET/POST/etc.
-     * @param path   Part after domain and before query-string. Starts with a "/".
-     * @param accept Format, e.g. html.
-     * @param host   AKA the domain.
-     * @return ???
-     */
-    public abstract Map<String, String> matches(String method, String path, String accept, String host);
-
-    public Map<String, String> matches(String method, String path) {
-        return matches(method, path, null, null);
-    }
-
-    public Map<String, String> matches(String method, String path, String accept) {
-        return matches(method, path, accept, null);
-    }
 }
