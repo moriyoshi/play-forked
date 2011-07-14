@@ -27,7 +27,7 @@ public abstract class Route {
 
     public abstract String getStaticDir();
 
-    public abstract boolean getStaticFile();
+    public abstract String getStaticFile();
 
     public abstract Pattern getPattern();
 

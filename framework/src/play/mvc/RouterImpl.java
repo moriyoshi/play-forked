@@ -323,7 +323,7 @@ public class RouterImpl extends Router {
         Pattern actionPattern;
         List<String> actionArgs = new ArrayList<String>(3);
         String staticDir;
-        boolean staticFile;
+        String staticFile;
         Pattern pattern;
         Pattern hostPattern;
         List<Arg> args = new ArrayList<Arg>(3);
@@ -362,7 +362,7 @@ public class RouterImpl extends Router {
             return staticDir;
         }
 
-        public boolean getStaticFile() {
+        public String getStaticFile() {
             return staticFile;
         }
 
@@ -401,7 +401,9 @@ public class RouterImpl extends Router {
         void compute() {
             this.host = null;
             this.hostPattern = new Pattern(".*");
-            if (action.startsWith("staticDir:") || action.startsWith("staticFile:")) {
+            final boolean actionIsStaticDir = action.startsWith("staticDir:");
+            final boolean actionIsStaticFile = action.startsWith("staticFile:");
+            if (actionIsStaticDir || actionIsStaticFile) {
                 // Is there is a host argument, append it.
                 if (!path.startsWith("/")) {
                     String p = this.path;
@@ -416,19 +418,18 @@ public class RouterImpl extends Router {
                     Logger.warn("Static route only support GET method");
                     return;
                 }
-            }
-            // staticDir
-            if (action.startsWith("staticDir:")) {
-                if (!this.path.endsWith("/") && !this.path.equals("/")) {
-                    Logger.warn("The path for a staticDir route must end with / (%s)", this);
-                    this.path += "/";
+                // staticDir
+                if (actionIsStaticDir) {
+                    if (!this.path.endsWith("/") && !this.path.equals("/")) {
+                        Logger.warn("The path for a staticDir route must end with / (%s)", this);
+                        this.path += "/";
+                    }
+                    this.pattern = new Pattern("^" + path + "({resource}.*)$");
+                    this.staticDir = action.substring("staticDir:".length());
+                } else if (actionIsStaticFile) {
+                    this.pattern = new Pattern("^" + path + "$");
+                    this.staticFile = action.substring("staticFile:".length());
                 }
-                this.pattern = new Pattern("^" + path + "({resource}.*)$");
-                this.staticDir = action.substring("staticDir:".length());
-            } else if (action.startsWith("staticFile:")) {
-                this.pattern = new Pattern("^" + path + "$");
-                this.staticFile = true;
-                this.staticDir = action.substring("staticFile:".length());
             } else {
                 // URL pattern
                 // Is there is a host argument, append it.
@@ -562,17 +563,20 @@ public class RouterImpl extends Router {
                     // Static dir
                     if (staticDir != null) {
                         String resource = null;
-                        if (!staticFile) {
-                            resource = matcher.group("resource");
-                        }
                         try {
-                            String root = new File(staticDir).getCanonicalPath();
-                            String childResourceName = staticDir + (staticFile ? "" : "/" + resource);
-                            String child = new File(childResourceName).getCanonicalPath();
-                            if (child.startsWith(root)) {
-                                throw new RenderStatic(childResourceName);
+                            if (staticFile != null) {
+                                throw new RenderStatic(staticFile);
+                            } else {
+                                resource = matcher.group("resource");
+                                String root = new File(staticDir).getCanonicalPath();
+                                String childResourceName = staticFile != null ? staticFile: staticDir + "/" + resource;
+                                String child = new File(childResourceName).getCanonicalPath();
+                                if (child.startsWith(root)) {
+                                    throw new RenderStatic(childResourceName);
+                                }
                             }
                         } catch (IOException e) {
+                            Logger.warn("Inaccessible resource", e);
                         }
                         throw new NotFound(resource);
                     } else {
