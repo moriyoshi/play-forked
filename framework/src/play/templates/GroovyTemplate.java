@@ -456,6 +456,31 @@ public class GroovyTemplate extends BaseTemplate {
             return GroovyTemplate.layoutData.get().get(key);
         }
 
+        static class ActionDefinitionWrapper {
+            public String getMethod() {
+                return actionDef.getMethod();
+            }
+
+            public boolean isContainingStar() {
+                return actionDef.isContainingStar();
+            }
+
+            public URI getUri(String encoding) {
+                URI retval = actionDef.getUri(encoding);
+                if (absolute)
+                    retval = Router.absolutize(retval);
+                return retval;
+            }
+
+            public ActionDefinitionWrapper(AbstractActionDefinition actionDef, boolean absolute) {
+                this.actionDef = actionDef;
+                this.absolute = absolute;
+            }
+
+            AbstractActionDefinition actionDef;
+            boolean absolute;
+        }
+
         static class ActionBridge extends GroovyObjectSupport {
 
             ExecutableTemplate template = null;
@@ -518,12 +543,9 @@ public class GroovyTemplate extends BaseTemplate {
                                 }
                             }
                         }
-                        AbstractActionDefinition def = Router.current.get().reverse(action, r);
-                        URI url = def.getUri();
-                        if (absolute) {
-                            url = Router.absolutize(url);
-                        }
-                        return url;
+                        return new ActionDefinitionWrapper( 
+                            Router.current.get().reverse(action, r),
+                            absolute);
                     } catch (ActionNotFoundException e) {
                         throw new NoRouteFoundException(action, null);
                     }

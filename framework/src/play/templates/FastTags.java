@@ -28,6 +28,7 @@ import play.mvc.Scope.Flash;
 import play.mvc.Scope.Session;
 import play.templates.BaseTemplate.RawData;
 import play.templates.GroovyTemplate.ExecutableTemplate;
+import play.templates.GroovyTemplate.ExecutableTemplate.ActionDefinitionWrapper;
 import play.utils.HTML;
 
 /**
@@ -82,9 +83,9 @@ public class FastTags {
      */
     public static void _form(Map<?, ?> args, Closure body, PrintWriter out, ExecutableTemplate template, int fromLine) {
         final String encoding = Http.Response.current().encoding;
-        AbstractActionDefinition actionDef = (AbstractActionDefinition)args.get("arg");
+        ActionDefinitionWrapper actionDef = (ActionDefinitionWrapper)args.get("arg");
         if (actionDef == null) {
-            actionDef = (AbstractActionDefinition) args.get("action");
+            actionDef = (ActionDefinitionWrapper) args.get("action");
         }
         String enctype = (String) args.get("enctype");
         if (enctype == null) {
