@@ -42,6 +42,4 @@ public abstract class Route {
     public abstract String getHost();
 
     public abstract Arg getHostArg();
-
-    public abstract String getRoutesFile();
 }

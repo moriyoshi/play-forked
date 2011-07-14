@@ -12,8 +12,6 @@ import play.Play;
 public abstract class Router {
     public abstract Iterable<Route> getRoutes();
 
-    public abstract Route getRoute(String method, String path, String action, String params, String headers, String sourceFile, int line);
-
     public abstract Map<String, String> route(String method, String path, String headers, String host);
 
     public abstract Route route(Http.Request request);
@@ -35,10 +33,6 @@ public abstract class Router {
      * Add a new route at the beginning of the route list
      */
     public abstract void prependRoute(String method, String path, String action, String params, String headers);
-
-    public Route getRoute(String method, String path, String action, String params, String headers) {
-        return getRoute(method, path, action, params, headers, null, 0);
-    }
 
     public Map<String, String> route(String method, String path) {
         return route(method, path, null, null);

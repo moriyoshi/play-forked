@@ -44,7 +44,7 @@ public class RouterImpl extends Router {
         if (position > routes.size()) {
             position = routes.size();
         }
-        routes.add(position, (RouteImpl)getRoute(method, path, action, params, headers));
+        routes.add(position, createRoute(method, path, action, params, headers));
     }
 
     /**
@@ -52,10 +52,10 @@ public class RouterImpl extends Router {
      * we want the method to append the routes to the list.
      */
     void appendRoute(String method, String path, String action, String params, String headers, String sourceFile, int line) {
-        routes.add((RouteImpl)getRoute(method, path, action, params, headers, sourceFile, line));
+        routes.add(createRoute(method, path, action, params, headers, sourceFile, line));
     }
 
-    public Route getRoute(String method, String path, String action, String params, String headers, String sourceFile, int line) {
+    RouteImpl createRoute(String method, String path, String action, String params, String headers, String sourceFile, int line) {
         RouteImpl route = new RouteImpl(this);
         route.method = method;
         route.path = path.replace("//", "/");
@@ -71,8 +71,12 @@ public class RouterImpl extends Router {
         return route;
     }
 
+    RouteImpl createRoute(String method, String path, String action, String params, String headers) {
+        return createRoute(method, path, action, params, headers, null, 0);
+    }
+
     public void prependRoute(String method, String path, String action, String params, String headers) {
-        routes.add(0, (RouteImpl)getRoute(method, path, action, params, headers));
+        routes.add(0, createRoute(method, path, action, params, headers));
     }
 
     /**
