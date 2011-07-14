@@ -56,7 +56,7 @@ public class RouterImpl extends Router {
     }
 
     public Route getRoute(String method, String path, String action, String params, String headers, String sourceFile, int line) {
-        RouteImpl route = new RouteImpl();
+        RouteImpl route = new RouteImpl(this);
         route.method = method;
         route.path = path.replace("//", "/");
         route.action = action;
@@ -259,7 +259,6 @@ public class RouterImpl extends Router {
         if (action.startsWith("controllers.")) {
             action = action.substring(12);
         }
-        args = new HashMap<String, Object>(args);
         // Add routeArgs
         if (Scope.RouteArgs.current() != null) {
             for (String key : Scope.RouteArgs.current().data.keySet()) {
@@ -269,36 +268,9 @@ public class RouterImpl extends Router {
             }
         }
         for (RouteImpl route : routes) {
-            if (route.getActionPattern() != null) {
-                Matcher matcher = route.getActionPattern().matcher(action);
-                if (matcher.matches()) {
-                    for (String group : route.getActionArgs()) {
-                        String v = matcher.group(group);
-                        if (v == null) {
-                            continue;
-                        }
-                        args.put(group, v.toLowerCase());
-                    }
-                    boolean allRequiredArgsAreHere = true;
-                    // les parametres codes en dur dans la route matchent-ils ?
-                    for (String staticKey : route.getStaticArgs().keySet()) {
-                        if (staticKey.equals("format")) {
-                            if (!(Http.Request.current() == null ? "" : Http.Request.current().format).equals(route.getStaticArgs().get("format"))) {
-                                allRequiredArgsAreHere = false;
-                                break;
-                            }
-                            continue; // format is a special key
-                        }
-                        if (!args.containsKey(staticKey) || (args.get(staticKey) == null)
-                                || !args.get(staticKey).toString().equals(route.getStaticArgs().get(staticKey))) {
-                            allRequiredArgsAreHere = false;
-                            break;
-                        }
-                    }
-                    if (allRequiredArgsAreHere) {
-                        return new ActionDefinition(this, route, action, args);
-                    }
-                }
+            ActionDefinition actionDef = route.reverse(action, args);
+            if (actionDef != null) {
+                return actionDef;
             }
         }
         throw new NoRouteFoundException(action, args);
@@ -309,7 +281,7 @@ public class RouterImpl extends Router {
     }
 
     public static class RouteImpl extends Route {
-
+        RouterImpl router;
         /**
          * HTTP method, e.g. "GET".
          */
@@ -619,9 +591,48 @@ public class RouterImpl extends Router {
             return matches(method, path, accept, null);
         }
 
+        public ActionDefinition reverse(String action, Map<String, Object> args) {
+            if (actionPattern == null)
+                return null;
+
+            final Matcher matcher = actionPattern.matcher(action);
+            if (!matcher.matches())
+                return null;
+
+            final Map<String, Object> _args = new HashMap<String, Object>(args);
+            for (String group : actionArgs) {
+                String v = matcher.group(group);
+                if (v == null) {
+                    continue;
+                }
+                _args.put(group, v.toLowerCase());
+            }
+
+            // les parametres codes en dur dans la route matchent-ils ?
+            for (String staticKey : staticArgs.keySet()) {
+                if (staticKey.equals("format")) {
+                    if (!(Http.Request.current() == null ? "" : Http.Request.current().format).equals(staticArgs.get("format"))) {
+                        return null;
+                    }
+                    continue; // format is a special key
+                }
+                if (!_args.containsKey(staticKey) ||
+                        (_args.get(staticKey) == null) ||
+                        !_args.get(staticKey).toString().equals(
+                            staticArgs.get(staticKey))) {
+                    return null;
+                }
+            }
+            return new ActionDefinition(router, this, action, _args);
+        }
+
         @Override
         public String toString() {
             return method + " " + path + " -> " + action;
+        }
+
+        public RouteImpl(RouterImpl router) {
+            this.router = router;
         }
     }
 }
