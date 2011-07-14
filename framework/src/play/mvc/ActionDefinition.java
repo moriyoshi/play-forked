@@ -26,15 +26,6 @@ public class ActionDefinition extends AbstractActionDefinition {
         return route;
     }
 
-    public String getMethod() {
-        return route.getMethod() == null || isContainingStar() ? "GET":
-               route.getMethod().toUpperCase();
-    }
-
-    public boolean isContainingStar() {
-        return "*".equals(route.getMethod());
-    }
-
     public String getAction() {
         return action;
     }
