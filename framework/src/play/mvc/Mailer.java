@@ -179,8 +179,8 @@ public class Mailer {
             if (templateName.startsWith("notifiers.")) {
                 templateName = templateName.substring("notifiers.".length());
             }
-            if (templateName.startsWith("controllers.")) {
-                templateName = templateName.substring("controllers.".length());
+            if (templateName.startsWith(ActionInvoker.CONTROLLERS_PACKAGE_PREFIX)) {
+                templateName = templateName.substring(ActionInvoker.CONTROLLERS_PACKAGE_PREFIX.length());
             }
             templateName = templateName.substring(0, templateName.indexOf("("));
             templateName = templateName.replace(".", "/");

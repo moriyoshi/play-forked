@@ -1,5 +1,7 @@
 package play.exceptions;
 
+import play.mvc.ActionInvoker;
+
 /**
  * Missing action
  */
@@ -12,8 +14,8 @@ public class ActionNotFoundException extends PlayException {
     private String action;
    
     public ActionNotFoundException(String action, Throwable cause) {
-        super(String.format("Action %s not found", action.startsWith("controllers.") ? action.substring(12) : action), cause);
-        this.action = action.startsWith("controllers.") ? action.substring(12) : action;
+        super(String.format("Action %s not found", ActionInvoker.getActionName(action), cause));
+        this.action = ActionInvoker.getActionName(action);
     }
 
     public String getAction() {

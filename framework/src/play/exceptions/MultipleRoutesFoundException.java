@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.List;
 import play.classloading.ApplicationClasses.ApplicationClass;
 import play.templates.Template;
+import play.mvc.ActionInvoker;
 import java.util.Arrays;
 
 /**
@@ -25,9 +26,7 @@ public class MultipleRoutesFoundException extends PlayException implements Sourc
         super("Multiple routes found");
         this.action = action;
         this.args = args;
-        if(this.action.startsWith("controllers.")) {
-            this.action = this.action.substring(12);
-        }
+        this.action = ActionInvoker.getActionName(action);
     } 
     
     public MultipleRoutesFoundException(String action, Map<String, Object> args, ApplicationClass<?> applicationClass, Integer line) {

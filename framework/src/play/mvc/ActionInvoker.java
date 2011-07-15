@@ -45,6 +45,7 @@ import play.mvc.results.NotFound;
  * Invoke an action after an HTTP request.
  */
 public class ActionInvoker {
+    public static final String CONTROLLERS_PACKAGE_PREFIX = "controllers.";
 
     @SuppressWarnings("unchecked")
     public static void resolve(Http.Request request, Http.Response response) {
@@ -571,13 +572,24 @@ public class ActionInvoker {
         return result;
     }
 
+    public static String getActionName(Method meth) {
+        return getActionName(meth.getDeclaringClass().getName() + "." + meth.getName());
+    }
+
+    public static String getActionName(String meth) {
+        String retval = meth;
+        if (retval.startsWith(CONTROLLERS_PACKAGE_PREFIX))
+            retval = retval.substring(CONTROLLERS_PACKAGE_PREFIX.length());
+        return retval;
+    }
+
     @SuppressWarnings("unchecked")
     public static Object[] getActionMethod(String fullAction) {
         Method actionMethod = null;
         Class<? extends Controller> controllerClass = null;
         try {
-            if (!fullAction.startsWith("controllers.")) {
-                fullAction = "controllers." + fullAction;
+            if (!fullAction.startsWith(CONTROLLERS_PACKAGE_PREFIX)) {
+                fullAction = CONTROLLERS_PACKAGE_PREFIX + fullAction;
             }
             String controller = fullAction.substring(0, fullAction.lastIndexOf("."));
             String action = fullAction.substring(fullAction.lastIndexOf(".") + 1);

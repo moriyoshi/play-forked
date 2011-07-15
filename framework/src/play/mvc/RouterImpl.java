@@ -258,9 +258,7 @@ public class RouterImpl extends Router {
     }
 
     public ActionDefinition reverse(String action, Http.Verb verb, Map<String, Object> args) {
-        if (action.startsWith("controllers.")) {
-            action = action.substring(12);
-        }
+        action = ActionInvoker.getActionName(action);
         // Add routeArgs
         if (Scope.RouteArgs.current() != null) {
             for (String key : Scope.RouteArgs.current().data.keySet()) {
