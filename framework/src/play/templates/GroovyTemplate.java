@@ -468,6 +468,10 @@ public class GroovyTemplate extends BaseTemplate {
                 return retval;
             }
 
+            public URI getUri() {
+                return getUri(Http.Response.current().encoding);
+            }
+
             public ActionDefinitionWrapper(AbstractActionDefinition actionDef, boolean absolute) {
                 this.actionDef = actionDef;
                 this.absolute = absolute;
@@ -479,7 +483,7 @@ public class GroovyTemplate extends BaseTemplate {
 
             @Override
             public String toString() {
-               return actionDef.toString();
+               return this.getUri().toString();
             }
 
             AbstractActionDefinition actionDef;
