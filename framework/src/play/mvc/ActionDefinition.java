@@ -15,6 +15,7 @@ public class ActionDefinition extends AbstractActionDefinition {
     final Router router;
     final Route route;
     final String action;
+    final Http.Verb method;
     final Map<String, Object> args;
     URI uriCache;
 
@@ -28,6 +29,10 @@ public class ActionDefinition extends AbstractActionDefinition {
 
     public String getAction() {
         return action;
+    }
+
+    public Http.Verb getMethod() {
+        return method;
     }
 
     public Map<String, Object> getArgs() {
@@ -146,10 +151,11 @@ public class ActionDefinition extends AbstractActionDefinition {
         return getUri().toString();
     }
 
-    public ActionDefinition(Router router, Route route, String action, Map<String, Object> args) {
+    public ActionDefinition(Router router, Route route, String action, Http.Verb method, Map<String, Object> args) {
         this.router = router;
         this.route = route;
         this.action = action;
+        this.method = method;
         this.args = args;
     }
 
@@ -157,6 +163,7 @@ public class ActionDefinition extends AbstractActionDefinition {
         this.router = null;
         this.route = null;
         this.action = null;
+        this.method = null;
         this.args = null;
     }
 }

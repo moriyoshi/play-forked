@@ -1,5 +1,6 @@
 package play.mvc;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public abstract class Route {
     /**
      * HTTP method, e.g. "GET".
      */
-    public abstract String getMethod();
+    public abstract EnumSet<Http.Verb> getMethods();
 
     public abstract String getPath();
 

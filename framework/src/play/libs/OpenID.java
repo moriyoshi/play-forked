@@ -16,6 +16,7 @@ import play.Logger;
 import play.exceptions.PlayException;
 import play.libs.WS.HttpResponse;
 import play.mvc.Router;
+import play.mvc.Http;
 import play.mvc.Http.Request;
 import play.mvc.Scope.Params;
 import play.mvc.results.Redirect;
@@ -135,12 +136,12 @@ public class OpenID {
             if (returnAction != null && returnAction.startsWith("http://")) {
                 url += "&openid.return_to=" + URLEncoder.encode(returnAction, "utf8");
             } else {
-                url += "&openid.return_to=" + URLEncoder.encode(Request.current().getBase() + Router.current.get().reverse(returnAction), "utf8");
+                url += "&openid.return_to=" + URLEncoder.encode(Request.current().getBase() + Router.current.get().reverse(returnAction, Http.Verb.GET), "utf8");
             }
             if (realmAction != null && realmAction.startsWith("http://")) {
                 url += "&openid.realm=" + URLEncoder.encode(realmAction, "utf8");
             } else {
-                url += "&openid.realm=" + URLEncoder.encode(Request.current().getBase() + Router.current.get().reverse(realmAction), "utf8");
+                url += "&openid.realm=" + URLEncoder.encode(Request.current().getBase() + Router.current.get().reverse(realmAction, Http.Verb.GET), "utf8");
             }
 
             if (!sregOptional.isEmpty() || !sregRequired.isEmpty()) {

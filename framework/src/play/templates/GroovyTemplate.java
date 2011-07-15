@@ -457,12 +457,8 @@ public class GroovyTemplate extends BaseTemplate {
         }
 
         static class ActionDefinitionWrapper {
-            public String getMethod() {
+            public Http.Verb getMethod() {
                 return actionDef.getMethod();
-            }
-
-            public boolean isContainingStar() {
-                return actionDef.isContainingStar();
             }
 
             public URI getUri(String encoding) {

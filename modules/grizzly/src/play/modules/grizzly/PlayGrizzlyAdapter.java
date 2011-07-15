@@ -148,7 +148,7 @@ public class PlayGrizzlyAdapter extends GrizzlyAdapter {
         Request request = new Http.Request();
         Request.current.set(request);
         URI uri = new URI(grizzlyRequest.getRequestURI());
-        request.method = grizzlyRequest.getMethod().intern();
+        request.method = Http.Verb.valueOf(grizzlyRequest.getMethod());
         request.path = uri.getPath();
         request.querystring = grizzlyRequest.getQueryString() == null ? "" : grizzlyRequest.getQueryString();
 
@@ -161,7 +161,7 @@ public class PlayGrizzlyAdapter extends GrizzlyAdapter {
         }
 
         if (grizzlyRequest.getHeader("X-HTTP-Method-Override") != null) {
-            request.method = grizzlyRequest.getHeader("X-HTTP-Method-Override").intern();
+            request.method = Http.Verb.valueOf(grizzlyRequest.getHeader("X-HTTP-Method-Override"));
         }
 
         request.body = grizzlyRequest.getInputStream();

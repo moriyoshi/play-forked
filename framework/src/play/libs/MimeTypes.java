@@ -6,7 +6,6 @@ import play.PlayPlugin;
 import play.mvc.Http;
 
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;

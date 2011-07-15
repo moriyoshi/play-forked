@@ -499,6 +499,26 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
         return fullAddress;
     }
 
+    static final Map<HttpMethod, Http.Verb> toHttpVerbMap;
+
+    static {
+        Map<HttpMethod, Http.Verb> _toHttpVerbMap = new HashMap<HttpMethod, Http.Verb>();
+        _toHttpVerbMap.put(HttpMethod.OPTIONS, Http.Verb.OPTIONS);
+        _toHttpVerbMap.put(HttpMethod.GET, Http.Verb.GET);
+        _toHttpVerbMap.put(HttpMethod.HEAD, Http.Verb.HEAD);
+        _toHttpVerbMap.put(HttpMethod.POST, Http.Verb.POST);
+        _toHttpVerbMap.put(HttpMethod.PUT, Http.Verb.PUT);
+        _toHttpVerbMap.put(HttpMethod.PATCH, Http.Verb.PATCH);
+        _toHttpVerbMap.put(HttpMethod.DELETE, Http.Verb.DELETE);
+        _toHttpVerbMap.put(HttpMethod.TRACE, Http.Verb.TRACE);
+        _toHttpVerbMap.put(HttpMethod.CONNECT, Http.Verb.CONNECT);
+        toHttpVerbMap = _toHttpVerbMap;
+    }
+
+    static Http.Verb toHttpVerb(HttpMethod meth) {
+        return toHttpVerbMap.get(meth);
+    }
+
     public Request parseRequest(ChannelHandlerContext ctx, HttpRequest nettyRequest) throws Exception {
         if (Logger.isTraceEnabled()) {
             Logger.trace("parseRequest: begin");
@@ -531,10 +551,10 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
         }
 
         String remoteAddress = getRemoteIPAddress(ctx);
-        String method = nettyRequest.getMethod().getName();
+        Http.Verb method = toHttpVerb(nettyRequest.getMethod());
 
         if (nettyRequest.getHeader("X-HTTP-Method-Override") != null) {
-            method = nettyRequest.getHeader("X-HTTP-Method-Override").intern();
+            method = Http.Verb.valueOf(nettyRequest.getHeader("X-HTTP-Method-Override"));
         }
 
         InputStream body = null;
@@ -1098,7 +1118,7 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
         Http.Request request = parseRequest(ctx, req);
 
         // Route the websocket request
-        request.method = "WS";
+        request.method = Http.Verb.WEBSOCKET;
         Map<String, String> route = Router.current.get().route(request.method, request.path);
         if (!route.containsKey("action")) {
             // No route found to handle this websocket connection

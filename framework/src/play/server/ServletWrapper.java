@@ -238,7 +238,7 @@ public class ServletWrapper extends HttpServlet implements ServletContextListene
     public static Request parseRequest(HttpServletRequest httpServletRequest) throws Exception {
 
         URI uri = new URI(httpServletRequest.getRequestURI());
-        String method = httpServletRequest.getMethod().intern();
+        String method = httpServletRequest.getMethod();
         String path = uri.getRawPath();
         if (path != null ) {
             path = URLDecoder.decode(path, "utf-8");
@@ -283,7 +283,7 @@ public class ServletWrapper extends HttpServlet implements ServletContextListene
 
         final Request request = Request.createRequest(
                 remoteAddress,
-                method,
+                Http.Verb.valueOf(method),
                 path,
                 querystring,
                 contentType,

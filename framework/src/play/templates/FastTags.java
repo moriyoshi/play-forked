@@ -91,22 +91,22 @@ public class FastTags {
         if (enctype == null) {
             enctype = "application/x-www-form-urlencoded";
         }
-        String realMethod = actionDef.getMethod();
-        if (realMethod == null && actionDef.isContainingStar()) {
-            realMethod = "POST"; // prefer POST for form ....
+        Http.Verb realMethod = actionDef.getMethod();
+        if (realMethod == null) {
+            realMethod = Http.Verb.POST; // prefer POST for form ....
         }
-        String method = realMethod;
+        Http.Verb method = realMethod;
         if (args.containsKey("method")) {
-            method = args.get("method").toString();
+            method = Http.Verb.valueOf(args.get("method").toString());
         }
         String url = actionDef.getUri(encoding).toString();
-        if (!("GET".equals(realMethod) || "POST".equals(realMethod))) {
+        if (!(Http.Verb.GET == realMethod || Http.Verb.POST == realMethod)) {
             String separator = url.indexOf('?') != -1 ? "&" : "?";
-            url += separator + "x-http-method-override=" + actionDef.getMethod().toUpperCase();
-            method = "POST";
+            url += separator + "x-http-method-override=" + actionDef.getMethod().toString();
+            method = Http.Verb.POST;
         }
-        out.print("<form action=\"" + url + "\" method=\"" + method.toLowerCase() + "\" accept-charset=\""+encoding+"\" enctype=\"" + enctype + "\" " + serialize(args, "action", "method", "accept-charset", "enctype") + ">");
-        if (!("GET".equals(method))) {
+        out.print("<form action=\"" + url + "\" method=\"" + method.toString().toLowerCase() + "\" accept-charset=\""+encoding+"\" enctype=\"" + enctype + "\" " + serialize(args, "action", "method", "accept-charset", "enctype") + ">");
+        if (Http.Verb.GET != method) {
             _authenticityToken(args, body, out, template, fromLine);
         }
         out.println(JavaExtensions.toString(body));
@@ -172,17 +172,17 @@ public class FastTags {
         if (actionDef == null) {
             actionDef = (AbstractActionDefinition) args.get("action");
         }
-        String realMethod = actionDef.getMethod();
-        String method = realMethod;
+        Http.Verb realMethod = actionDef.getMethod();
+        Http.Verb method = realMethod;
         String url = actionDef.getUri().toString();
-        if (!("GET".equals(realMethod))) {
-            if (!("POST".equals(realMethod))) {
+        if (realMethod != Http.Verb.GET) {
+            if (realMethod != Http.Verb.POST) {
                 String separator = url.indexOf('?') != -1 ? "&" : "?";
                 url += separator + "x-http-method-override=" + realMethod;
-                method = "POST";
+                method = Http.Verb.POST;
             }
         }
-        if (!method.equals("GET")) {
+        if (method != Http.Verb.GET) {
             String id = Codec.UUID();
             out.print("<form method=\"POST\" id=\"" + id + "\" " +(args.containsKey("target") ? "target=\"" + args.get("target") + "\"" : "")+ " style=\"display:none\" action=\"" + url + "\">");
             _authenticityToken(args, body, out, template, fromLine);

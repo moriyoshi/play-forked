@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import play.Logger;
 import play.Play;
 import play.vfs.VirtualFile;
 import play.exceptions.NoRouteFoundException;
+import play.exceptions.MultipleRoutesFoundException;
 import play.exceptions.UnexpectedException;
 import play.mvc.results.NotFound;
 import play.mvc.results.RenderStatic;
@@ -36,28 +38,28 @@ public class RouterImpl extends Router {
     /**
      * Add a route
      */
-    public void addRoute(String method, String path, String action, String params, String headers) {
-        appendRoute(method, path, action, params, headers, null, 0);
+    public void addRoute(EnumSet<Http.Verb> methods, String path, String action, String params, String headers) {
+        appendRoute(methods, path, action, params, headers, null, 0);
     }
 
-    public void addRoute(int position, String method, String path, String action, String params, String headers) {
+    public void addRoute(int position, EnumSet<Http.Verb> methods, String path, String action, String params, String headers) {
         if (position > routes.size()) {
             position = routes.size();
         }
-        routes.add(position, createRoute(method, path, action, params, headers));
+        routes.add(position, createRoute(methods, path, action, params, headers));
     }
 
     /**
      * This is used internally when reading the route file. The order the routes are added matters and
      * we want the method to append the routes to the list.
      */
-    void appendRoute(String method, String path, String action, String params, String headers, String sourceFile, int line) {
-        routes.add(createRoute(method, path, action, params, headers, sourceFile, line));
+    void appendRoute(EnumSet<Http.Verb> methods, String path, String action, String params, String headers, String sourceFile, int line) {
+        routes.add(createRoute(methods, path, action, params, headers, sourceFile, line));
     }
 
-    RouteImpl createRoute(String method, String path, String action, String params, String headers, String sourceFile, int line) {
+    RouteImpl createRoute(EnumSet<Http.Verb> methods, String path, String action, String params, String headers, String sourceFile, int line) {
         RouteImpl route = new RouteImpl(this);
-        route.method = method;
+        route.methods = methods;
         route.path = path.replace("//", "/");
         route.action = action;
         route.routesFile = sourceFile;
@@ -71,12 +73,8 @@ public class RouterImpl extends Router {
         return route;
     }
 
-    RouteImpl createRoute(String method, String path, String action, String params, String headers) {
-        return createRoute(method, path, action, params, headers, null, 0);
-    }
-
-    public void prependRoute(String method, String path, String action, String params, String headers) {
-        routes.add(0, createRoute(method, path, action, params, headers));
+    RouteImpl createRoute(EnumSet<Http.Verb> methods, String path, String action, String params, String headers) {
+        return createRoute(methods, path, action, params, headers, null, 0);
     }
 
     /**
@@ -126,11 +124,11 @@ public class RouterImpl extends Router {
                         Logger.error("Cannot include routes for module %s (not found)", moduleName);
                     }
                 } else {
-                    String method = matcher.group("method");
-                    String path = prefix + matcher.group("path");
-                    String params = matcher.group("params");
-                    String headers = matcher.group("headers");
-                    appendRoute(method, path, action, params, headers, fileAbsolutePath, lineNumber);
+                    final EnumSet<Http.Verb> methods = toVerbSet(matcher.group("method"));
+                    final String path = prefix + matcher.group("path");
+                    final String params = matcher.group("params");
+                    final String headers = matcher.group("headers");
+                    appendRoute(methods, path, action, params, headers, fileAbsolutePath, lineNumber);
                 }
             } else {
                 Logger.error("Invalid route definition : %s", line);
@@ -178,7 +176,7 @@ public class RouterImpl extends Router {
                 if (Logger.isTraceEnabled()) {
                     Logger.trace("request method %s overriden to %s ", request.method, matcher.group("method"));
                 }
-                request.method = matcher.group("method");
+                request.method = Http.Verb.valueOf(matcher.group("method"));
             }
         }
         for (RouteImpl route : routes) {
@@ -203,10 +201,10 @@ public class RouterImpl extends Router {
             }
         }
         // Not found - if the request was a HEAD, let's see if we can find a corresponding GET
-        if (request.method.equalsIgnoreCase("head")) {
-            request.method = "GET";
-            Route route = route(request);
-            request.method = "HEAD";
+        if (request.method == Http.Verb.HEAD) {
+            request.method = Http.Verb.GET;
+            final Route route = route(request);
+            request.method = Http.Verb.HEAD;
             if (route != null) {
                 return route;
             }
@@ -214,7 +212,7 @@ public class RouterImpl extends Router {
         throw new NotFound(request.method, request.path);
     }
 
-    public Map<String, String> route(String method, String path, String headers, String host) {
+    public Map<String, String> route(Http.Verb method, String path, String headers, String host) {
         for (RouteImpl route : routes) {
             Map<String, String> args = route.matches(method, path, headers, host);
             if (args != null) {
@@ -259,7 +257,7 @@ public class RouterImpl extends Router {
         throw new NoRouteFoundException(file.relativePath());
     }
 
-    public ActionDefinition reverse(String action, Map<String, Object> args) {
+    public ActionDefinition reverse(String action, Http.Verb verb, Map<String, Object> args) {
         if (action.startsWith("controllers.")) {
             action = action.substring(12);
         }
@@ -271,13 +269,20 @@ public class RouterImpl extends Router {
                 }
             }
         }
+        ActionDefinition actionDef = null;
         for (RouteImpl route : routes) {
-            ActionDefinition actionDef = route.reverse(action, args);
-            if (actionDef != null) {
-                return actionDef;
+            ActionDefinition _actionDef = route.reverse(action, verb, args);
+            if (_actionDef != null) {
+                if (Play.mode == Play.Mode.PROD)
+                    return _actionDef;
+                if (actionDef != null)
+                    throw new MultipleRoutesFoundException(action, args);
+                actionDef = _actionDef;
             }
         }
-        throw new NoRouteFoundException(action, args);
+        if (actionDef == null)
+            throw new NoRouteFoundException(action, args);
+        return actionDef;
     }
 
     public RouterImpl(VirtualFile routes, String prefix) {
@@ -289,7 +294,7 @@ public class RouterImpl extends Router {
         /**
          * HTTP method, e.g. "GET".
          */
-        String method;
+        EnumSet<Http.Verb> methods;
         String path;
 
         /**
@@ -314,8 +319,8 @@ public class RouterImpl extends Router {
         static Pattern argsPattern = new Pattern("\\{<([^>]+)>([a-zA-Z_0-9]+)\\}");
         static Pattern paramPattern = new Pattern("([a-zA-Z_0-9]+):'(.*)'");
 
-        public String getMethod() {
-            return method;
+        public EnumSet<Http.Verb> getMethods() {
+            return methods;
         }
 
         public String getPath() {
@@ -390,7 +395,7 @@ public class RouterImpl extends Router {
                         return;
                     }
                 }
-                if (!method.equalsIgnoreCase("*") && !method.equalsIgnoreCase("GET")) {
+                if (!methods.contains(Http.Verb.GET)) {
                     Logger.warn("Static route only support GET method");
                     return;
                 }
@@ -523,14 +528,14 @@ public class RouterImpl extends Router {
          * @param host   AKA the domain.
          * @return ???
          */
-        public Map<String, String> matches(String method, String path, String accept, String host) {
+        public Map<String, String> matches(Http.Verb method, String path, String accept, String host) {
             // Normalize
             if (path.equals(Play.ctxPath)) {
                 path = path + "/";
             }
             // If method is HEAD and we have a GET
-            if (method == null || this.method.equals("*") || method.equalsIgnoreCase(this.method) || (method.equalsIgnoreCase("head") && ("get").equalsIgnoreCase(this.method))) {
-
+            if (methods.contains(method) ||
+                    (method == Http.Verb.HEAD && methods.contains(Http.Verb.GET))) {
                 Matcher matcher = pattern.matcher(path);
 
                 boolean hostMatches = (host == null);
@@ -587,21 +592,31 @@ public class RouterImpl extends Router {
             return null;
         }
 
-        public Map<String, String> matches(String method, String path) {
+        public Map<String, String> matches(Http.Verb method, String path) {
             return matches(method, path, null, null);
         }
 
-        public Map<String, String> matches(String method, String path, String accept) {
+        public Map<String, String> matches(Http.Verb method, String path, String accept) {
             return matches(method, path, accept, null);
         }
 
-        public ActionDefinition reverse(String action, Map<String, Object> args) {
+        public ActionDefinition reverse(String action, Http.Verb method, Map<String, Object> args) {
             if (actionPattern == null)
                 return null;
 
             final Matcher matcher = actionPattern.matcher(action);
             if (!matcher.matches())
                 return null;
+
+            if (method != null) {
+                if (!methods.contains(method))
+                    return null;
+            } else {
+                if (methods.size() != 1)
+                    return null;
+                method = methods.iterator().next();
+            }
+
 
             final Map<String, Object> _args = new HashMap<String, Object>(args);
             for (String group : actionArgs) {
@@ -627,12 +642,13 @@ public class RouterImpl extends Router {
                     return null;
                 }
             }
-            return new ActionDefinition(router, this, action, _args);
+
+            return new ActionDefinition(router, this, action, method, _args);
         }
 
         @Override
         public String toString() {
-            return method + " " + path + " -> " + action;
+            return methods + " " + path + " -> " + action;
         }
 
         public RouteImpl(RouterImpl router) {

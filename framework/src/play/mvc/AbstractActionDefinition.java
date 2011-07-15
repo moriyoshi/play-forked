@@ -15,6 +15,11 @@ public abstract class AbstractActionDefinition {
     public abstract Route getRoute();
 
     /**
+     * The HTTP method, e.g. "GET".
+     */
+    public abstract Http.Verb getMethod();
+
+    /**
      * @todo - what is this? does it include the class and package?
      */
     public abstract String getAction();
@@ -25,19 +30,6 @@ public abstract class AbstractActionDefinition {
     public abstract Map<String, Object> getArgs();
 
     public abstract URI getUri(String encoding);
-
-    /**
-     * The HTTP method, e.g. "GET".
-     */
-    public String getMethod() {
-        final Route route = getRoute();
-        return route.getMethod() == null || isContainingStar() ? "GET":
-               route.getMethod().toUpperCase();
-    }
-
-    public boolean isContainingStar() {
-        return "*".equals(getRoute().getMethod());
-    }
 
     public URI getUri() {
         return getUri(Http.Response.current() == null ? "utf-8" : Http.Response.current().encoding);

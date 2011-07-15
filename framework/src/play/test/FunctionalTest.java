@@ -92,7 +92,7 @@ public abstract class FunctionalTest extends BaseTest {
         } else {
             path = turl;
         }
-        request.method = "GET";
+        request.method = Http.Verb.GET;
         request.url = turl;
         request.path = path;
         request.querystring = queryString;
@@ -140,7 +140,7 @@ public abstract class FunctionalTest extends BaseTest {
         } else {
             path = turl;
         }
-        request.method = "POST";
+        request.method = Http.Verb.POST;
         request.contentType = contenttype;
         request.url = turl;
         request.path = path;
@@ -220,7 +220,7 @@ public abstract class FunctionalTest extends BaseTest {
         } else {
             path = turl;
         }
-        request.method = "PUT";
+        request.method = Http.Verb.PUT;
         request.contentType = contenttype;
         request.url = turl;
         request.path = path;
@@ -249,7 +249,7 @@ public abstract class FunctionalTest extends BaseTest {
         } else {
             path = turl;
         }
-        request.method = "DELETE";
+        request.method = Http.Verb.DELETE;
         request.url = turl;
         request.path = path;
         request.querystring = queryString;
@@ -320,7 +320,7 @@ public abstract class FunctionalTest extends BaseTest {
     public static Request newRequest() {
         Request request = Request.createRequest(
                 null,
-                "GET",
+                Http.Verb.GET,
                 "/",
                 "",
                 null,

@@ -70,6 +70,26 @@ public class Http {
         }
     }
 
+    public static enum Verb {
+        GET,
+        HEAD,
+        POST,
+        OPTIONS,
+        PUT,
+        DELETE,
+        TRACE,
+        PATCH,
+        CONNECT,
+        PROPFIND,
+        PROPPATCH,
+        MKCOL,
+        COPY,
+        MOVE,
+        LOCK,
+        UNLOCK,
+        WEBSOCKET
+    }
+
     /**
      * An HTTP Header
      */
@@ -200,7 +220,7 @@ public class Http {
         /**
          * HTTP method
          */
-        public String method;
+        public Verb method;
         /**
          * Server domain
          */
@@ -323,7 +343,7 @@ public class Http {
          */
         public static Request createRequest(
                 String _remoteAddress,
-                String _method,
+                Http.Verb _method,
                 String _path,
                 String _querystring,
                 String _contentType,

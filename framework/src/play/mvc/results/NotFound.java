@@ -8,6 +8,7 @@ import play.libs.MimeTypes;
 import play.mvc.Http;
 import play.mvc.Http.Request;
 import play.mvc.Http.Response;
+import play.mvc.Http.Verb;
 import play.mvc.Scope;
 import play.templates.TemplateLoader;
 
@@ -32,7 +33,7 @@ public class NotFound extends Result {
      * @param method routed method
      * @param path  routed path 
      */
-    public NotFound(String method, String path) {
+    public NotFound(Verb method, String path) {
         super(method + " " + path);
     }
 

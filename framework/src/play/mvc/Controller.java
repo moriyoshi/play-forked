@@ -544,7 +544,7 @@ public class Controller implements ControllerSupport {
      * @param permanent true -> 301, false -> 302
      * @param args Method arguments
      */
-    protected static void redirect(String action, boolean permanent, Object... args) {
+    protected static void redirect(String action, Http.Verb method, boolean permanent, Object... args) {
         try {
             Map<String, Object> newArgs = new HashMap<String, Object>(args.length);
             Method actionMethod = (Method) ActionInvoker.getActionMethod(action)[1];
@@ -575,14 +575,14 @@ public class Controller implements ControllerSupport {
 
             }
             try {
-
-                AbstractActionDefinition actionDefinition = Router.current.get().reverse(action, newArgs);
+                AbstractActionDefinition actionDefinition = Router.current.get().reverse(action, method, newArgs);
 
                 if (_currentReverse.get() != null) {
                     _currentReverse.set(new ActionDefinition(
                         actionDefinition.getRouter(),
                         actionDefinition.getRoute(),
                         actionDefinition.getAction(),
+                        actionDefinition.getMethod(),
                         actionDefinition.getArgs()));
                 } else {
                     throw new Redirect(actionDefinition.toString(), permanent);
