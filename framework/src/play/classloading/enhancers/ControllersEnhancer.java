@@ -65,7 +65,7 @@ public class ControllersEnhancer extends Enhancer {
                     isHandler = true;
                     break;
                 }
-                if (a.getTypeName().endsWith("$ByPass")) {
+                if (ByPass.class.isAssignableFrom(ControllersEnhancer.class.forName(a.getTypeName()))) {
                     isHandler = true;
                     break;
                 }
